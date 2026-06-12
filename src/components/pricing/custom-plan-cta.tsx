@@ -28,7 +28,7 @@ export function CustomPlanCTA() {
             </h2>
             <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base leading-relaxed sm:text-lg">
               Multiple products, multiple branches, or something built just for
-              you — we'll put together a plan and a price that fits.
+              you — we&apos;ll put together a plan and a price that fits.
             </p>
             <div className="mt-8 flex justify-center">
               <ButtonLink

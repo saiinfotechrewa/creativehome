@@ -18,6 +18,8 @@
 .DS_Store
 *.pem
 Thumbs.db
+.claude/
+.playwright-mcp/
 
 # debug
 npm-debug.log*
