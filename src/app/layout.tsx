@@ -3,6 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ScrollToTop } from "@/components/layout/scroll-to-top";
+import { CursorGlow } from "@/components/shared/cursor-glow";
+import { PageTransition } from "@/components/shared/page-transition";
+import { SmoothScrollProvider } from "@/components/shared/smooth-scroll-provider";
+import { WhatsAppButton } from "@/components/shared/whatsapp-button";
 import { SITE_CONFIG } from "@/lib/constants";
 
 const inter = Inter({
@@ -14,7 +19,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
-    default: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    default: "CreativeDox — Business Software & Automation Solutions",
     template: `%s · ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,
@@ -23,15 +28,15 @@ export const metadata: Metadata = {
   creator: SITE_CONFIG.name,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: SITE_CONFIG.url,
-    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    title: "CreativeDox — Business Software & Automation Solutions",
     description: SITE_CONFIG.description,
     siteName: SITE_CONFIG.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    title: "CreativeDox — Business Software & Automation Solutions",
     description: SITE_CONFIG.description,
   },
   icons: {
@@ -51,10 +56,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body className="bg-background text-foreground min-h-screen font-sans antialiased">
+        <SmoothScrollProvider>
+          <CursorGlow />
+          <Navbar />
+          <main>
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <Footer />
+          <ScrollToTop />
+          <WhatsAppButton />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

@@ -44,6 +44,25 @@
   /* Brand gradient + glow accents */
   --color-glow-primary: rgba(59, 130, 246, 0.35);
   --color-glow-secondary: rgba(139, 92, 246, 0.35);
+
+  /* Marquee — duration/gap are overridable per-instance via inline style */
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--marquee-gap, 3rem)));
+    }
+  }
+}
+
+/* Registered so the conic-gradient angle can be animated smoothly. */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 /* ------------------------------------------------------------------ */
@@ -56,7 +75,12 @@
 
   html {
     scroll-behavior: smooth;
+    /* Keep anchor targets clear of the fixed 64px header. */
+    scroll-padding-top: 5rem;
     color-scheme: dark;
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) var(--color-background);
   }
 
   body {
@@ -68,15 +92,26 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Film-grain noise overlay — extremely subtle, sits above everything. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
   ::selection {
     background-color: var(--color-primary);
     color: var(--color-primary-foreground);
   }
 
-  /* Custom scrollbar — keeps the dark aesthetic consistent */
+  /* Custom scrollbar — thin and dark, primary thumb on hover */
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     background: var(--color-background);
@@ -87,7 +122,7 @@
     border: 2px solid var(--color-background);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-muted);
+    background: var(--color-primary);
   }
 }
 
@@ -111,7 +146,11 @@
       linear-gradient(to right, var(--color-border) 1px, transparent 1px),
       linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
     background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%);
+    mask-image: radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      #000 70%,
+      transparent 110%
+    );
   }
 
   .glow-primary {
@@ -120,5 +159,88 @@
 
   .glow-secondary {
     box-shadow: 0 0 60px -15px var(--color-glow-secondary);
+  }
+
+  /* Blue → purple gradient that slowly drifts across the text. */
+  .text-gradient-animated {
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-secondary),
+      var(--color-primary)
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-shift 6s linear infinite;
+  }
+
+  /* Apply the shimmer sweep — element needs its own gradient background. */
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  /* 1px border whose blue/purple gradient rotates around the element. */
+  .gradient-border-animated {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(
+          var(--gradient-border-fill, var(--color-card)),
+          var(--gradient-border-fill, var(--color-card))
+        )
+        padding-box,
+      conic-gradient(
+          from var(--border-angle),
+          var(--color-primary),
+          var(--color-secondary) 40%,
+          transparent 70%,
+          var(--color-primary)
+        )
+        border-box;
+    animation: border-rotate 4s linear infinite;
+  }
+}
+
+@keyframes gradient-shift {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Light sweep for skeletons / highlight text — pair with a 200% bg. */
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Star twinkle — pair with inline animation-delay/duration. */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes border-rotate {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient-animated,
+  .gradient-border-animated,
+  .animate-marquee,
+  .animate-shimmer {
+    animation: none;
   }
 }

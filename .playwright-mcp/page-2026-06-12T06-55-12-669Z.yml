@@ -1,0 +1,615 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e5]:
+      - 'link "{} CreativeDox" [ref=e6] [cursor=pointer]':
+        - /url: /
+        - generic [ref=e7]: "{}"
+        - generic [ref=e8]: CreativeDox
+      - list [ref=e9]:
+        - listitem [ref=e10]:
+          - link "Solutions" [ref=e11] [cursor=pointer]:
+            - /url: /#solutions
+            - text: Solutions
+            - img [ref=e12]
+        - listitem [ref=e14]:
+          - link "Services" [ref=e15] [cursor=pointer]:
+            - /url: /#solutions
+            - text: Services
+            - img [ref=e16]
+        - listitem [ref=e18]:
+          - link "Industries" [ref=e19] [cursor=pointer]:
+            - /url: /#industries
+            - text: Industries
+            - img [ref=e20]
+        - listitem [ref=e22]:
+          - link "Pricing" [ref=e23] [cursor=pointer]:
+            - /url: /#pricing
+        - listitem [ref=e24]:
+          - link "Case Studies" [ref=e25] [cursor=pointer]:
+            - /url: /#testimonials
+        - listitem [ref=e26]:
+          - link "Resources" [ref=e27] [cursor=pointer]:
+            - /url: /blog
+            - text: Resources
+            - img [ref=e28]
+      - generic [ref=e31]:
+        - link "Login" [ref=e32] [cursor=pointer]:
+          - /url: https://app.creativedox.com
+        - link "Book Consultation" [ref=e33] [cursor=pointer]:
+          - /url: /#contact
+          - text: Book Consultation
+  - main [ref=e34]:
+    - generic [ref=e35]:
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e41]: Popular
+          - heading "Attendance that runs itself" [level=1] [ref=e42]
+          - paragraph [ref=e43]: Track attendance from biometric devices, mobile GPS, or web — then turn it into payroll-ready reports in one click. Built for offices, factories, and field teams across India.
+          - generic [ref=e44]:
+            - link "Get Free Demo" [ref=e45] [cursor=pointer]:
+              - /url: https://demo.creativedox.com/attendance
+              - text: Get Free Demo
+              - img [ref=e46]
+            - link "View Pricing" [ref=e48] [cursor=pointer]:
+              - /url: "#pricing"
+            - link "Login" [ref=e49] [cursor=pointer]:
+              - /url: https://app.creativedox.com/attendance
+          - list [ref=e50]:
+            - listitem [ref=e51]:
+              - img [ref=e52]
+              - text: Free onboarding
+            - listitem [ref=e54]:
+              - img [ref=e55]
+              - text: No long contracts
+            - listitem [ref=e57]:
+              - img [ref=e58]
+              - text: Made in India
+        - generic [ref=e68]: app.creativedox.com/attendance
+      - generic [ref=e120]:
+        - generic [ref=e121]:
+          - generic [ref=e123]: The Problem
+          - heading "Still tracking attendance in registers and Excel?" [level=2] [ref=e124]:
+            - generic [ref=e125]: Still
+            - generic [ref=e126]: tracking
+            - generic [ref=e127]: attendance
+            - generic [ref=e128]: in
+            - generic [ref=e129]: registers
+            - generic [ref=e130]: and
+            - generic [ref=e131]: Excel?
+          - paragraph [ref=e133]: These are the costs businesses quietly absorb every month — until they automate.
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - img [ref=e137]
+            - heading "Hours lost every month" [level=3] [ref=e140]
+            - paragraph [ref=e141]: HR spends 2–3 days each month collecting registers, chasing missing punches, and reconciling Excel sheets before salaries can be processed.
+          - generic [ref=e142]:
+            - img [ref=e144]
+            - heading "Proxy & buddy punching" [level=3] [ref=e146]
+            - paragraph [ref=e147]: Paper registers and shared logins make it easy for one person to mark attendance for another — and you pay for hours never worked.
+          - generic [ref=e148]:
+            - img [ref=e150]
+            - heading "Payroll errors & disputes" [level=3] [ref=e153]
+            - paragraph [ref=e154]: Manual calculation of late marks, half days, and overtime leads to salary mistakes — and arguments with staff every payday.
+          - generic [ref=e155]:
+            - img [ref=e157]
+            - heading "No visibility on field staff" [level=3] [ref=e160]
+            - paragraph [ref=e161]: Sales and service teams work outside the office. Without GPS check-in, you have no idea when or where they actually started their day.
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - generic [ref=e166]: Features
+          - heading "Everything Attendance handles for you" [level=2] [ref=e167]:
+            - generic [ref=e168]: Everything
+            - generic [ref=e169]: Attendance
+            - generic [ref=e170]: handles
+            - generic [ref=e171]: for
+            - generic [ref=e172]: you
+          - paragraph [ref=e174]: Every feature below ships in the product today — no add-on modules, no surprise costs.
+        - generic [ref=e175]:
+          - generic [ref=e178]:
+            - img [ref=e180]
+            - heading "Biometric Integration" [level=3] [ref=e189]
+            - paragraph [ref=e190]: Connect fingerprint and face-recognition devices from all major brands. Punches sync to the cloud automatically — no manual download.
+          - generic [ref=e193]:
+            - img [ref=e195]
+            - heading "Mobile GPS Check-in" [level=3] [ref=e198]
+            - paragraph [ref=e199]: Field staff mark attendance from their phone with GPS location and an optional selfie, so you know exactly where work started.
+          - generic [ref=e202]:
+            - img [ref=e204]
+            - heading "Leave Management" [level=3] [ref=e208]
+            - paragraph [ref=e209]: Staff apply for leave in the app; managers approve in one tap. Balances, carry-forwards, and holiday calendars update themselves.
+          - generic [ref=e212]:
+            - img [ref=e214]
+            - heading "Shift Scheduling" [level=3] [ref=e219]
+            - paragraph [ref=e220]: Create day, night, and rotational shifts with grace periods. Assign by department or branch and handle week-offs automatically.
+          - generic [ref=e223]:
+            - img [ref=e225]
+            - heading "Overtime Tracking" [level=3] [ref=e228]
+            - paragraph [ref=e229]: Overtime hours calculate automatically from punch data based on your rules — single rate, double rate, or compensatory off.
+          - generic [ref=e232]:
+            - img [ref=e234]
+            - heading "Payroll Integration" [level=3] [ref=e237]
+            - paragraph [ref=e238]: Late marks, half days, leaves, and OT flow straight into a payroll-ready sheet. Export to Excel or push to your payroll system.
+          - generic [ref=e241]:
+            - img [ref=e243]
+            - heading "Mobile App for Staff" [level=3] [ref=e245]
+            - paragraph [ref=e246]: Employees see their attendance, leave balance, and holidays in their own app — cutting HR queries to almost zero.
+          - generic [ref=e249]:
+            - img [ref=e251]
+            - heading "Reports & Analytics" [level=3] [ref=e253]
+            - paragraph [ref=e254]: Daily MIS, late-comer trends, department-wise absenteeism, and muster rolls — ready for audits and compliance, anytime.
+          - generic [ref=e257]:
+            - img [ref=e259]
+            - heading "Multi-branch Support" [level=3] [ref=e263]
+            - paragraph [ref=e264]: Manage every branch from one dashboard with branch-wise policies, devices, and reports — and one consolidated payroll sheet.
+      - generic [ref=e266]:
+        - generic [ref=e267]:
+          - generic [ref=e269]: Inside the Product
+          - heading "See it before you try it" [level=2] [ref=e270]:
+            - generic [ref=e271]: See
+            - generic [ref=e272]: it
+            - generic [ref=e273]: before
+            - generic [ref=e274]: you
+            - generic [ref=e275]: try
+            - generic [ref=e276]: it
+          - paragraph [ref=e278]: A quick tour of the screens your team will live in every day.
+        - generic [ref=e279]:
+          - generic [ref=e287]: app.creativedox.com/attendance
+          - button "Previous screenshot" [ref=e338]:
+            - img [ref=e339]
+          - button "Next screenshot" [ref=e341]:
+            - img [ref=e342]
+          - paragraph [ref=e344]: Live dashboard — who's in, who's late, branch by branch
+          - generic [ref=e345]:
+            - button "Show screenshot 1" [ref=e346]
+            - button "Show screenshot 2" [ref=e347]
+            - button "Show screenshot 3" [ref=e348]
+      - generic [ref=e350]:
+        - generic [ref=e351]:
+          - generic [ref=e353]: Modules
+          - heading "Every module, included" [level=2] [ref=e354]:
+            - generic [ref=e355]: Every
+            - generic [ref=e356]: module,
+            - generic [ref=e357]: included
+          - paragraph [ref=e359]: No per-module pricing games — every Attendance plan ships with the full module set listed here.
+        - generic [ref=e360]:
+          - generic [ref=e361]:
+            - button "01 Attendance Capture" [expanded] [ref=e362]:
+              - generic [ref=e363]: "01"
+              - generic [ref=e364]: Attendance Capture
+              - img [ref=e365]
+            - paragraph [ref=e369]: Biometric, mobile GPS, web punch, and manual regularization with an approval trail.
+          - button "02 Leave Management" [ref=e371]:
+            - generic [ref=e372]: "02"
+            - generic [ref=e373]: Leave Management
+            - img [ref=e374]
+          - button "03 Shift & Roster" [ref=e376]:
+            - generic [ref=e377]: "03"
+            - generic [ref=e378]: Shift & Roster
+            - img [ref=e379]
+          - button "04 Overtime & Late Rules" [ref=e381]:
+            - generic [ref=e382]: "04"
+            - generic [ref=e383]: Overtime & Late Rules
+            - img [ref=e384]
+          - button "05 Holiday Calendar" [ref=e386]:
+            - generic [ref=e387]: "05"
+            - generic [ref=e388]: Holiday Calendar
+            - img [ref=e389]
+          - button "06 Payroll Export" [ref=e391]:
+            - generic [ref=e392]: "06"
+            - generic [ref=e393]: Payroll Export
+            - img [ref=e394]
+          - button "07 Employee Self-Service" [ref=e396]:
+            - generic [ref=e397]: "07"
+            - generic [ref=e398]: Employee Self-Service
+            - img [ref=e399]
+          - button "08 Reports & MIS" [ref=e401]:
+            - generic [ref=e402]: "08"
+            - generic [ref=e403]: Reports & MIS
+            - img [ref=e404]
+          - button "09 Device Management" [ref=e406]:
+            - generic [ref=e407]: "09"
+            - generic [ref=e408]: Device Management
+            - img [ref=e409]
+          - button "10 Roles & Permissions" [ref=e411]:
+            - generic [ref=e412]: "10"
+            - generic [ref=e413]: Roles & Permissions
+            - img [ref=e414]
+      - generic [ref=e416]:
+        - generic [ref=e417]:
+          - generic [ref=e419]: Before & After
+          - heading "What actually changes" [level=2] [ref=e420]:
+            - generic [ref=e421]: What
+            - generic [ref=e422]: actually
+            - generic [ref=e423]: changes
+          - paragraph [ref=e425]: The same work, before and after Attendance — as our customers describe it.
+        - generic [ref=e426]:
+          - generic [ref=e427]:
+            - generic [ref=e428]: Without Attendance
+            - generic [ref=e429]: With Attendance
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - img [ref=e433]
+              - paragraph [ref=e436]: 2–3 days of HR effort to close attendance every month
+            - img [ref=e437]
+            - generic [ref=e439]:
+              - img [ref=e441]
+              - paragraph [ref=e443]: Payroll-ready report generated in one click
+          - generic [ref=e444]:
+            - generic [ref=e445]:
+              - img [ref=e447]
+              - paragraph [ref=e450]: Proxy punching and inflated hours go unnoticed
+            - img [ref=e451]
+            - generic [ref=e453]:
+              - img [ref=e455]
+              - paragraph [ref=e457]: Biometric + GPS verification on every punch
+          - generic [ref=e458]:
+            - generic [ref=e459]:
+              - img [ref=e461]
+              - paragraph [ref=e464]: Salary disputes over late marks and leaves
+            - img [ref=e465]
+            - generic [ref=e467]:
+              - img [ref=e469]
+              - paragraph [ref=e471]: Transparent records staff can see in their own app
+          - generic [ref=e472]:
+            - generic [ref=e473]:
+              - img [ref=e475]
+              - paragraph [ref=e478]: No idea when field staff actually start work
+            - img [ref=e479]
+            - generic [ref=e481]:
+              - img [ref=e483]
+              - paragraph [ref=e485]: Live GPS check-ins with location and time stamps
+          - generic [ref=e486]:
+            - generic [ref=e487]:
+              - img [ref=e489]
+              - paragraph [ref=e492]: Branch registers reach head office days late
+            - img [ref=e493]
+            - generic [ref=e495]:
+              - img [ref=e497]
+              - paragraph [ref=e499]: Every branch visible on one live dashboard
+      - generic [ref=e501]:
+        - generic [ref=e502]:
+          - generic [ref=e504]: Pricing
+          - heading "Simple plans, no surprises" [level=2] [ref=e505]:
+            - generic [ref=e506]: Simple
+            - generic [ref=e507]: plans,
+            - generic [ref=e508]: "no"
+            - generic [ref=e509]: surprises
+          - paragraph [ref=e511]: Start small, upgrade when you grow. Every plan includes onboarding and updates.
+        - generic [ref=e512]:
+          - button "Monthly" [pressed] [ref=e513]
+          - button "Annual Save ~20%" [ref=e514]:
+            - text: Annual
+            - generic [ref=e515]: Save ~20%
+        - generic [ref=e516]:
+          - generic [ref=e518]:
+            - heading "Starter" [level=3] [ref=e519]
+            - paragraph [ref=e520]: For small teams getting off paper registers.
+            - generic [ref=e521]:
+              - generic [ref=e522]: ₹499
+              - generic [ref=e523]: /month
+            - paragraph [ref=e524]: billed monthly
+            - list [ref=e525]:
+              - listitem [ref=e526]:
+                - img [ref=e527]
+                - text: Up to 25 employees
+              - listitem [ref=e529]:
+                - img [ref=e530]
+                - text: Mobile + web attendance
+              - listitem [ref=e532]:
+                - img [ref=e533]
+                - text: Basic leave management
+              - listitem [ref=e535]:
+                - img [ref=e536]
+                - text: Monthly attendance reports
+              - listitem [ref=e538]:
+                - img [ref=e539]
+                - text: Email support
+            - link "Start with Starter" [ref=e542] [cursor=pointer]:
+              - /url: /#contact
+          - generic [ref=e544]:
+            - generic [ref=e546]: Recommended
+            - heading "Professional" [level=3] [ref=e547]
+            - paragraph [ref=e548]: For growing businesses with shifts and field staff.
+            - generic [ref=e549]:
+              - generic [ref=e550]: ₹999
+              - generic [ref=e551]: /month
+            - paragraph [ref=e552]: billed monthly
+            - list [ref=e553]:
+              - listitem [ref=e554]:
+                - img [ref=e555]
+                - text: Up to 100 employees
+              - listitem [ref=e557]:
+                - img [ref=e558]
+                - text: Biometric device integration
+              - listitem [ref=e560]:
+                - img [ref=e561]
+                - text: GPS check-in with selfie
+              - listitem [ref=e563]:
+                - img [ref=e564]
+                - text: Shift scheduling & overtime
+              - listitem [ref=e566]:
+                - img [ref=e567]
+                - text: Payroll-ready export
+              - listitem [ref=e569]:
+                - img [ref=e570]
+                - text: WhatsApp alerts
+              - listitem [ref=e572]:
+                - img [ref=e573]
+                - text: Priority support
+            - link "Get Professional" [ref=e576] [cursor=pointer]:
+              - /url: /#contact
+              - text: Get Professional
+          - generic [ref=e578]:
+            - heading "Enterprise" [level=3] [ref=e579]
+            - paragraph [ref=e580]: For multi-branch operations and compliance needs.
+            - generic [ref=e581]:
+              - generic [ref=e582]: ₹1,999
+              - generic [ref=e583]: /month
+            - paragraph [ref=e584]: billed monthly
+            - list [ref=e585]:
+              - listitem [ref=e586]:
+                - img [ref=e587]
+                - text: Unlimited employees
+              - listitem [ref=e589]:
+                - img [ref=e590]
+                - text: Multi-branch dashboard
+              - listitem [ref=e592]:
+                - img [ref=e593]
+                - text: Payroll system API integration
+              - listitem [ref=e595]:
+                - img [ref=e596]
+                - text: Custom policies & approval flows
+              - listitem [ref=e598]:
+                - img [ref=e599]
+                - text: Audit-ready compliance reports
+              - listitem [ref=e601]:
+                - img [ref=e602]
+                - text: Dedicated account manager
+            - link "Talk to Sales" [ref=e605] [cursor=pointer]:
+              - /url: /#contact
+        - paragraph [ref=e606]: All prices exclude GST. Annual plans are billed once a year at the discounted monthly rate.
+      - generic [ref=e608]:
+        - generic [ref=e609]:
+          - generic [ref=e611]: FAQ
+          - heading "Questions, answered" [level=2] [ref=e612]:
+            - generic [ref=e613]: Questions,
+            - generic [ref=e614]: answered
+          - paragraph [ref=e616]: Everything businesses ask us before getting started — answered straight.
+        - generic [ref=e617]:
+          - generic [ref=e618]:
+            - button "Which biometric devices are supported?" [expanded] [ref=e619]:
+              - generic [ref=e620]: Which biometric devices are supported?
+              - img [ref=e621]
+            - paragraph [ref=e624]: We support fingerprint and face-recognition devices from all major brands sold in India, including eSSL, Realtime, ZKTeco, and Matrix. Punches sync to the cloud automatically — no manual data download needed.
+          - button "Can field staff mark attendance without coming to office?" [ref=e626]:
+            - generic [ref=e627]: Can field staff mark attendance without coming to office?
+            - img [ref=e628]
+          - button "How does payroll integration work?" [ref=e631]:
+            - generic [ref=e632]: How does payroll integration work?
+            - img [ref=e633]
+          - button "Can I manage multiple branches?" [ref=e636]:
+            - generic [ref=e637]: Can I manage multiple branches?
+            - img [ref=e638]
+          - button "What happens if the internet goes down at a branch?" [ref=e641]:
+            - generic [ref=e642]: What happens if the internet goes down at a branch?
+            - img [ref=e643]
+          - button "How long does setup take?" [ref=e646]:
+            - generic [ref=e647]: How long does setup take?
+            - img [ref=e648]
+          - button "Can employees see their own attendance?" [ref=e651]:
+            - generic [ref=e652]: Can employees see their own attendance?
+            - img [ref=e653]
+          - button "Is my attendance data secure?" [ref=e656]:
+            - generic [ref=e657]: Is my attendance data secure?
+            - img [ref=e658]
+          - button "Do you support night shifts that cross midnight?" [ref=e661]:
+            - generic [ref=e662]: Do you support night shifts that cross midnight?
+            - img [ref=e663]
+          - button "Can I try it before buying?" [ref=e666]:
+            - generic [ref=e667]: Can I try it before buying?
+            - img [ref=e668]
+      - generic [ref=e671]:
+        - generic [ref=e672]:
+          - generic [ref=e674]: Integrations
+          - heading "Plays well with what you already use" [level=2] [ref=e675]:
+            - generic [ref=e676]: Plays
+            - generic [ref=e677]: well
+            - generic [ref=e678]: with
+            - generic [ref=e679]: what
+            - generic [ref=e680]: you
+            - generic [ref=e681]: already
+            - generic [ref=e682]: use
+          - paragraph [ref=e684]: Connect your existing tools and devices — no rip-and-replace required.
+        - generic [ref=e685]:
+          - generic [ref=e687]:
+            - img [ref=e688]
+            - text: Tally
+          - generic [ref=e691]:
+            - img [ref=e692]
+            - text: eSSL Biometric
+          - generic [ref=e695]:
+            - img [ref=e696]
+            - text: ZKTeco Biometric
+          - generic [ref=e699]:
+            - img [ref=e700]
+            - text: Realtime Biometric
+          - generic [ref=e703]:
+            - img [ref=e704]
+            - text: WhatsApp
+          - generic [ref=e707]:
+            - img [ref=e708]
+            - text: Payroll Systems (API)
+          - generic [ref=e711]:
+            - img [ref=e712]
+            - text: Excel Import/Export
+      - generic [ref=e719]:
+        - heading "Ready to try Attendance?" [level=2] [ref=e720]
+        - paragraph [ref=e721]: See it working with your own data in a free, no-pressure demo — and go live within the week.
+        - generic [ref=e722]:
+          - link "Get Free Demo" [ref=e723] [cursor=pointer]:
+            - /url: https://demo.creativedox.com/attendance
+            - text: Get Free Demo
+            - img [ref=e724]
+          - link "Talk to Sales" [ref=e726] [cursor=pointer]:
+            - /url: /#contact
+        - paragraph [ref=e727]: Free onboarding · Hindi & English support · No long contracts
+      - generic [ref=e729]:
+        - generic [ref=e730]:
+          - generic [ref=e732]: Explore More
+          - heading "Works even better together" [level=2] [ref=e733]:
+            - generic [ref=e734]: Works
+            - generic [ref=e735]: even
+            - generic [ref=e736]: better
+            - generic [ref=e737]: together
+          - paragraph [ref=e739]: CreativeDox products share data — add one and both get more useful.
+        - generic [ref=e740]:
+          - link "CreativeDox CRM Every lead worked. Every deal tracked. Nothing slips. Explore" [ref=e742] [cursor=pointer]:
+            - /url: /solutions/crm-software
+            - generic [ref=e744]:
+              - img [ref=e746]
+              - heading "CreativeDox CRM" [level=3] [ref=e751]
+              - paragraph [ref=e752]: Every lead worked. Every deal tracked. Nothing slips.
+              - generic [ref=e753]:
+                - text: Explore
+                - img [ref=e754]
+          - link "CreativeDox Accounting GST billing & stock control your CA will love Explore" [ref=e757] [cursor=pointer]:
+            - /url: /solutions/accounting-inventory
+            - generic [ref=e759]:
+              - img [ref=e761]
+              - heading "CreativeDox Accounting" [level=3] [ref=e763]
+              - paragraph [ref=e764]: GST billing & stock control your CA will love
+              - generic [ref=e765]:
+                - text: Explore
+                - img [ref=e766]
+          - link "CreativeDox ERP Purchase to dispatch — one system, one truth Explore" [ref=e769] [cursor=pointer]:
+            - /url: /solutions/erp-solutions
+            - generic [ref=e771]:
+              - img [ref=e773]
+              - heading "CreativeDox ERP" [level=3] [ref=e778]
+              - paragraph [ref=e779]: Purchase to dispatch — one system, one truth
+              - generic [ref=e780]:
+                - text: Explore
+                - img [ref=e781]
+  - contentinfo [ref=e783]:
+    - generic [ref=e785]:
+      - generic [ref=e786]:
+        - generic [ref=e787]:
+          - heading "Automation tips for growing businesses" [level=3] [ref=e788]
+          - paragraph [ref=e789]: One practical email a month — playbooks, product updates, and ideas to cut busywork. No spam, unsubscribe anytime.
+        - generic [ref=e790]:
+          - generic [ref=e791]: Email address
+          - textbox "Email address" [ref=e792]:
+            - /placeholder: Enter your work email
+          - button "Subscribe" [ref=e793]:
+            - text: Subscribe
+            - img [ref=e794]
+      - generic [ref=e797]:
+        - generic [ref=e798]:
+          - 'link "{} CreativeDox" [ref=e799] [cursor=pointer]':
+            - /url: /
+            - generic [ref=e800]: "{}"
+            - generic [ref=e801]: CreativeDox
+          - paragraph [ref=e802]: CreativeDox builds ready-to-use business software and automation — CRM, GST accounting, attendance, WhatsApp marketing, and custom development for growing businesses across India.
+          - generic [ref=e803]:
+            - link "LinkedIn" [ref=e804] [cursor=pointer]:
+              - /url: https://linkedin.com/company/creativedox
+              - img [ref=e805]
+            - link "Twitter" [ref=e809] [cursor=pointer]:
+              - /url: https://twitter.com/creativedox
+              - img [ref=e810]
+            - link "YouTube" [ref=e812] [cursor=pointer]:
+              - /url: https://youtube.com/@creativedox
+              - img [ref=e813]
+            - link "Instagram" [ref=e816] [cursor=pointer]:
+              - /url: https://instagram.com/creativedox
+              - img [ref=e817]
+        - generic [ref=e820]:
+          - heading "Solutions" [level=4] [ref=e821]
+          - list [ref=e822]:
+            - listitem [ref=e823]:
+              - link "Attendance Management" [ref=e824] [cursor=pointer]:
+                - /url: /solutions/attendance-management
+            - listitem [ref=e825]:
+              - link "CRM Software" [ref=e826] [cursor=pointer]:
+                - /url: /solutions/crm-software
+            - listitem [ref=e827]:
+              - link "Accounting & Inventory" [ref=e828] [cursor=pointer]:
+                - /url: /solutions/accounting-inventory
+            - listitem [ref=e829]:
+              - link "WhatsApp Automation" [ref=e830] [cursor=pointer]:
+                - /url: /solutions/whatsapp-automation
+            - listitem [ref=e831]:
+              - link "Marketing Automation" [ref=e832] [cursor=pointer]:
+                - /url: /solutions/marketing-automation
+            - listitem [ref=e833]:
+              - link "Cable TV Management" [ref=e834] [cursor=pointer]:
+                - /url: /solutions/cable-tv-management
+        - generic [ref=e835]:
+          - heading "Company" [level=4] [ref=e836]
+          - list [ref=e837]:
+            - listitem [ref=e838]:
+              - link "About Us" [ref=e839] [cursor=pointer]:
+                - /url: /#why-us
+            - listitem [ref=e840]:
+              - link "Case Studies" [ref=e841] [cursor=pointer]:
+                - /url: /#testimonials
+            - listitem [ref=e842]:
+              - link "Industries" [ref=e843] [cursor=pointer]:
+                - /url: /#industries
+            - listitem [ref=e844]:
+              - link "Careers" [ref=e845] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e846]:
+              - link "Contact" [ref=e847] [cursor=pointer]:
+                - /url: /#contact
+        - generic [ref=e848]:
+          - heading "Resources" [level=4] [ref=e849]
+          - list [ref=e850]:
+            - listitem [ref=e851]:
+              - link "Blog" [ref=e852] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e853]:
+              - link "Guides" [ref=e854] [cursor=pointer]:
+                - /url: /guides
+            - listitem [ref=e855]:
+              - link "FAQs" [ref=e856] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e857]:
+              - link "Help Center" [ref=e858] [cursor=pointer]:
+                - /url: https://help.creativedox.com
+            - listitem [ref=e859]:
+              - link "Book a Demo" [ref=e860] [cursor=pointer]:
+                - /url: /#contact
+        - generic [ref=e861]:
+          - heading "Contact" [level=4] [ref=e862]
+          - list [ref=e863]:
+            - listitem [ref=e864]:
+              - img [ref=e865]
+              - text: Rewa, Madhya Pradesh, India
+            - listitem [ref=e868]:
+              - link "+91 555 010 2400" [ref=e869] [cursor=pointer]:
+                - /url: tel:+915550102400
+                - img [ref=e870]
+                - text: +91 555 010 2400
+            - listitem [ref=e872]:
+              - link "hello@creativedox.com" [ref=e873] [cursor=pointer]:
+                - /url: mailto:hello@creativedox.com
+                - img [ref=e874]
+                - text: hello@creativedox.com
+      - generic [ref=e877]:
+        - paragraph [ref=e878]: © 2026 CreativeDox. All rights reserved.
+        - list [ref=e879]:
+          - listitem [ref=e880]:
+            - link "Privacy Policy" [ref=e881] [cursor=pointer]:
+              - /url: /privacy
+          - listitem [ref=e882]:
+            - link "Terms of Service" [ref=e883] [cursor=pointer]:
+              - /url: /terms
+          - listitem [ref=e884]:
+            - link "Refund Policy" [ref=e885] [cursor=pointer]:
+              - /url: /refunds
+  - generic:
+    - link "Chat with us on WhatsApp":
+      - /url: https://wa.me/915550102400?text=Hi%2C%20I'm%20interested%20in%20CreativeDox%20solutions.%20Can%20you%20help%3F
+      - img
+      - generic: Chat with us

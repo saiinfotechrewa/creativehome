@@ -1,16 +1,14 @@
-import type { Stat } from "@/lib/types";
-
 /** Company-wide constants and metadata. */
 export const SITE_CONFIG = {
   name: "CreativeDox",
   shortName: "CreativeDox",
   description:
-    "CreativeDox builds custom business software and automation that helps teams ship faster, cut busywork, and scale operations.",
+    "CreativeDox builds ready-to-use business software and automation — CRM, GST accounting, attendance, WhatsApp marketing, and custom development for growing businesses across India.",
   tagline: "Business software & automation, engineered to scale.",
   url: "https://creativedox.com",
   email: "hello@creativedox.com",
-  phone: "+1 (555) 010-2400",
-  address: "Remote-first · Worldwide",
+  phone: "+91 555 010 2400",
+  address: "Rewa, Madhya Pradesh, India",
   ogImage: "/og.png",
   keywords: [
     "business software",
@@ -22,21 +20,14 @@ export const SITE_CONFIG = {
   ],
 } as const;
 
-/** Social profiles used in the footer. */
+/** Social profiles and chat channels used in the footer. */
 export const SOCIAL_LINKS = {
-  twitter: "https://twitter.com/creativedox",
   linkedin: "https://linkedin.com/company/creativedox",
-  github: "https://github.com/creativedox",
+  twitter: "https://twitter.com/creativedox",
   youtube: "https://youtube.com/@creativedox",
+  instagram: "https://instagram.com/creativedox",
+  whatsapp: "https://wa.me/915550102400",
 } as const;
-
-/** Headline metrics used in the social-proof strip. */
-export const COMPANY_STATS: Stat[] = [
-  { label: "Workflows automated", value: "12M+", description: "Tasks run on autopilot every month" },
-  { label: "Teams onboarded", value: "480+", description: "From startups to enterprises" },
-  { label: "Avg. time saved", value: "32 hrs", description: "Per team, per week" },
-  { label: "Uptime", value: "99.99%", description: "Across all managed services" },
-];
 
 /** Shared animation timing tokens for Framer Motion. */
 export const MOTION = {

@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "default" | "primary" | "secondary" | "success" | "warning";
+export type BadgeVariant =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning";
 
 const variants: Record<BadgeVariant, string> = {
   default: "border-border bg-accent text-muted-foreground",
@@ -14,16 +19,32 @@ const variants: Record<BadgeVariant, string> = {
 interface BadgeProps {
   children: ReactNode;
   variant?: BadgeVariant;
+  /**
+   * Featured style — replaces the static border with an animated
+   * blue→purple gradient border that rotates around the pill.
+   */
+  featured?: boolean;
+  /** Adds a subtle primary-colored glow behind the pill. */
+  glow?: boolean;
   className?: string;
 }
 
 /** Small pill label for statuses, tags, and eyebrow text. */
-export function Badge({ children, variant = "default", className }: BadgeProps) {
+export function Badge({
+  children,
+  variant = "default",
+  featured,
+  glow,
+  className,
+}: BadgeProps) {
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium",
-        variants[variant],
+        featured
+          ? "gradient-border-animated text-foreground [--gradient-border-fill:var(--color-accent)]"
+          : variants[variant],
+        glow && "shadow-[0_0_16px_0_var(--color-glow-primary)]",
         className
       )}
     >

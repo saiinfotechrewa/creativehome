@@ -1,27 +1,14 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { MOTION } from "@/lib/constants";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
-/** Shared fade-up variant used across sections. */
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: MOTION.duration, ease: MOTION.ease },
-  },
-};
+/** Shared fade-up variant used across sections (alias of `fadeInUp`). */
+export const fadeUp = fadeInUp;
 
-/** Container that staggers its children on scroll into view. */
-export const staggerContainer: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: MOTION.stagger, delayChildren: 0.05 },
-  },
-};
+export { staggerContainer };
 
 interface RevealProps {
   children: ReactNode;

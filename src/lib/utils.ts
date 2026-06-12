@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { MouseEvent as ReactMouseEvent } from "react";
 
 /**
  * Merge Tailwind classes intelligently — `clsx` handles conditional
@@ -20,9 +21,20 @@ export function formatCompactNumber(value: number): string {
 
 /** Build an absolute URL from the configured site URL + a path. */
 export function absoluteUrl(path: string): string {
-  const base =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://creativedox.com";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://creativedox.com";
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/**
+ * Track the cursor inside an element for spotlight hover effects.
+ * Writes `--spot-x` / `--spot-y` CSS variables consumed by a
+ * `radial-gradient(... at var(--spot-x) var(--spot-y))` overlay.
+ */
+export function trackSpotlight(event: ReactMouseEvent<HTMLElement>): void {
+  const el = event.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+  el.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
 }
 
 /** Smooth-scroll to an element by id (client-side only). */
