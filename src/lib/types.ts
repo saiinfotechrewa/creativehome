@@ -257,3 +257,141 @@ export interface ProductDetail {
   /** Slugs of 3 related product pages. */
   relatedProducts: string[];
 }
+
+/* ------------------------------------------------------------------ */
+/*  Blog (/blog, /blog/[slug])                                         */
+/* ------------------------------------------------------------------ */
+
+/** A single rendered block inside a blog post body. */
+export type BlogContentBlock =
+  | { type: "heading"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[] }
+  | { type: "ordered"; items: string[] }
+  | { type: "quote"; text: string };
+
+/** Author byline shown on cards and post heroes. */
+export interface BlogAuthor {
+  name: string;
+  role: string;
+  /** Initials for the placeholder avatar. */
+  avatar: string;
+}
+
+/** Full content model for a blog post. */
+export interface BlogPost {
+  /** URL slug — /blog/[slug]. */
+  slug: string;
+  title: string;
+  /** One/two-line summary shown on cards and meta description. */
+  excerpt: string;
+  /** Category label, also used for the filter tabs. */
+  category: string;
+  author: BlogAuthor;
+  /** Publish date, ISO `YYYY-MM-DD`. */
+  date: string;
+  /** Estimated read time in minutes. */
+  readTime: number;
+  /** Thumbnail accent icon (resolved via the icon registry). */
+  icon: IconName;
+  /** Tailwind gradient stops for the thumbnail (e.g. "from-blue-500 to-sky-600"). */
+  gradient: string;
+  /** SEO overrides; fall back to title/excerpt when absent. */
+  metaTitle?: string;
+  metaDescription?: string;
+  /** Ordered body blocks rendered by BlogContent. */
+  content: BlogContentBlock[];
+  /** Free-text tags shown under the post. */
+  tags?: string[];
+}
+
+/* ------------------------------------------------------------------ */
+/*  Services (/services, /services/[service])                          */
+/* ------------------------------------------------------------------ */
+
+/** A deliverable example shown in the "What We Build" grid. */
+export interface ServiceDeliverable {
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+/** One step of a service's delivery process (4–6 per service). */
+export interface ServiceProcessStep {
+  /** 1-based position in the sequence. */
+  step: number;
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+/** Compact case-study snippet shown on a service page. */
+export interface ServiceCaseStudy {
+  client: string;
+  industry: string;
+  /** The problem the client came to us with. */
+  challenge: string;
+  /** What we delivered and the outcome. */
+  outcome: string;
+  /** 3 headline metrics (display-ready, e.g. "60%", "4 weeks"). */
+  metrics: { value: string; label: string }[];
+}
+
+/** A pricing model offered for a service (fixed / hourly / retainer). */
+export interface ServicePricingModel {
+  id: "fixed" | "hourly" | "retainer";
+  label: string;
+  icon: IconName;
+  /** Display-ready headline price, e.g. "From ₹1.5L", "₹1,800". */
+  price: string;
+  /** Unit qualifier shown next to the price, e.g. "/ project", "/ hour". */
+  unit: string;
+  description: string;
+  /** 3–4 inclusions for this model. */
+  features: string[];
+  /** Highlights this model with a spotlight treatment. */
+  recommended?: boolean;
+}
+
+/** Full content model for a service detail page. */
+export interface ServiceDetail {
+  /** URL slug — /services/[slug]. */
+  slug: string;
+  title: string;
+  /** Short eyebrow/category label. */
+  eyebrow: string;
+  /** Hero headline (animated word-by-word). */
+  headline: string;
+  /** Hero supporting paragraph. */
+  heroDescription: string;
+  /** SEO title/description for generateMetadata. */
+  metaTitle: string;
+  metaDescription: string;
+  icon: IconName;
+  /** Tailwind text-color class for accents (e.g. "text-sky-400"). */
+  color: string;
+  /** Accent hex matching `color`, for spotlight/glow effects. */
+  hex: string;
+  /** Tailwind gradient stops for hero orb and accents. */
+  gradient: string;
+  deliverables: ServiceDeliverable[];
+  process: ServiceProcessStep[];
+  /** Tech-stack names rendered as monogram chips. */
+  technologies: string[];
+  caseStudy: ServiceCaseStudy;
+  pricing: ServicePricingModel[];
+}
+
+/** A card on the services overview grid (/services). */
+export interface ServiceCard {
+  id: string;
+  title: string;
+  description: string;
+  icon: IconName;
+  color: string;
+  hex: string;
+  gradient: string;
+  href: string;
+  /** Link label, e.g. "Explore service". */
+  cta: string;
+}

@@ -19,6 +19,15 @@ export function formatCompactNumber(value: number): string {
   }).format(value);
 }
 
+/** Format an ISO date (YYYY-MM-DD) as e.g. "12 June 2026". */
+export function formatDate(iso: string): string {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 /** Build an absolute URL from the configured site URL + a path. */
 export function absoluteUrl(path: string): string {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://creativedox.com";

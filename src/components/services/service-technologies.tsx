@@ -1,0 +1,45 @@
+import { Container } from "@/components/ui/container";
+import { SectionHeading } from "@/components/ui/section-heading";
+import { Stagger, StaggerItem } from "@/components/shared/motion";
+import type { ServiceDetail } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+/** "Technologies" — the tech stack rendered as monogram chips. */
+export function ServiceTechnologies({ service }: { service: ServiceDetail }) {
+  return (
+    <section className="py-24 sm:py-28">
+      <Container>
+        <SectionHeading
+          eyebrow="Technologies"
+          title="A modern, battle-tested stack"
+          description="We pick proven tools over trends — the ones that stay fast, secure, and maintainable years from now."
+        />
+
+        <Stagger className="mx-auto mt-14 flex max-w-4xl flex-wrap items-center justify-center gap-3 sm:gap-4">
+          {service.technologies.map((tech) => (
+            <StaggerItem key={tech}>
+              <div
+                className={cn(
+                  "group border-border bg-card hover:border-muted flex items-center gap-3 rounded-full border py-2 pl-2 pr-5 transition-colors"
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white shadow-inner",
+                    service.gradient
+                  )}
+                  aria-hidden
+                >
+                  {tech.charAt(0)}
+                </span>
+                <span className="text-foreground text-sm font-medium">
+                  {tech}
+                </span>
+              </div>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </Container>
+    </section>
+  );
+}
