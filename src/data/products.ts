@@ -173,6 +173,28 @@ export const PRODUCTS: Product[] = [
     screenshot: "/screenshots/erp.png",
     gradient: "from-rose-500 to-pink-600",
   },
+  {
+    id: "lead-management",
+    name: "CreativeDox Leads",
+    tagline: "Capture, assign & convert every enquiry",
+    description:
+      "Pull enquiries from Facebook, Google, your website, and walk-ins into one queue — auto-assigned, followed up on WhatsApp, and tracked to conversion so no lead ever goes cold.",
+    icon: "filter",
+    features: [
+      "Facebook & Google lead sync",
+      "Round-robin auto-assignment",
+      "WhatsApp nurture sequences",
+      "Source-wise ROI & funnel reports",
+    ],
+    pricing: "From ₹599/month",
+    priceMonthly: 599,
+    demoUrl: "https://demo.creativedox.com/leads",
+    loginUrl: "https://app.creativedox.com/leads",
+    buyUrl: "/#contact",
+    screenshot: "/screenshots/leads.png",
+    badge: "Trending",
+    gradient: "from-fuchsia-500 to-purple-600",
+  },
 ];
 
 /** Look up a product by its slug. */

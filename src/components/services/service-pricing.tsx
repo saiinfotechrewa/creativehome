@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 /** "Pricing Model" — fixed / hourly / retainer engagement options. */
 export function ServicePricing({ service }: { service: ServiceDetail }) {
   return (
-    <section className="py-24 sm:py-28">
+    <section id="pricing" className="scroll-mt-32 py-24 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Pricing Model"

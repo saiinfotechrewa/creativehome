@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /** "What We Build" — deliverable examples in a spotlight-card grid. */
 export function ServiceDeliverables({ service }: { service: ServiceDetail }) {
   return (
-    <section className="py-24 sm:py-28">
+    <section id="deliverables" className="scroll-mt-32 py-24 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="What We Build"

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /** "Our Process" — a numbered, connected timeline of 4–6 steps. */
 export function ServiceProcess({ service }: { service: ServiceDetail }) {
   return (
-    <section id="process" className="scroll-mt-20 py-24 sm:py-28">
+    <section id="process" className="scroll-mt-32 py-24 sm:py-28">
       {/* Subtle tinted backdrop to separate the section */}
       <div className="relative">
         <div

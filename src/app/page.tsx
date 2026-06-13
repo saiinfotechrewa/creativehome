@@ -1,4 +1,8 @@
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildSiteJsonLd } from "@/lib/structured-data";
+import { SITE_CONFIG } from "@/lib/constants";
 import { Hero } from "@/components/sections/hero";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { LogoMarquee } from "@/components/sections/logo-marquee";
@@ -31,6 +35,17 @@ const FinalCTA = dynamic(() =>
 );
 
 /**
+ * The homepage owns the site-wide canonical and is the single place the
+ * Organization + WebSite graph is emitted; inner pages reference the
+ * Organization by @id rather than repeating it. Title/description are
+ * inherited from the root layout's defaults.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: SITE_CONFIG.url },
+  openGraph: { url: SITE_CONFIG.url },
+};
+
+/**
  * CreativeDox homepage. Section ids (for nav scroll + highlighting):
  * hero → trust → solutions → industries → process → products →
  * why-us → testimonials → stats → contact.
@@ -38,6 +53,7 @@ const FinalCTA = dynamic(() =>
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={buildSiteJsonLd()} />
       <Hero />
       <TrustBar />
       <LogoMarquee />

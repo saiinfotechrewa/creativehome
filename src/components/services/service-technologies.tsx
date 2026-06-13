@@ -1,13 +1,13 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Stagger, StaggerItem } from "@/components/shared/motion";
+import { BrandGlyph } from "@/components/services/brand-glyph";
 import type { ServiceDetail } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
-/** "Technologies" — the tech stack rendered as monogram chips. */
+/** "Technologies" — the tech stack rendered as brand-logo chips. */
 export function ServiceTechnologies({ service }: { service: ServiceDetail }) {
   return (
-    <section className="py-24 sm:py-28">
+    <section id="technologies" className="scroll-mt-32 py-24 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Technologies"
@@ -18,20 +18,12 @@ export function ServiceTechnologies({ service }: { service: ServiceDetail }) {
         <Stagger className="mx-auto mt-14 flex max-w-4xl flex-wrap items-center justify-center gap-3 sm:gap-4">
           {service.technologies.map((tech) => (
             <StaggerItem key={tech}>
-              <div
-                className={cn(
-                  "group border-border bg-card hover:border-muted flex items-center gap-3 rounded-full border py-2 pl-2 pr-5 transition-colors"
-                )}
-              >
-                <span
-                  className={cn(
-                    "inline-flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white shadow-inner",
-                    service.gradient
-                  )}
-                  aria-hidden
-                >
-                  {tech.charAt(0)}
-                </span>
+              <div className="group border-border bg-card hover:border-muted flex items-center gap-3 rounded-full border py-2 pr-5 pl-2 transition-all duration-300 hover:-translate-y-0.5">
+                <BrandGlyph
+                  name={tech}
+                  gradient={service.gradient}
+                  className="transition-transform duration-300 group-hover:scale-110"
+                />
                 <span className="text-foreground text-sm font-medium">
                   {tech}
                 </span>

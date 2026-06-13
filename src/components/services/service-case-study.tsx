@@ -1,16 +1,34 @@
 import { Quote } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { Reveal } from "@/components/shared/motion";
 import type { ServiceDetail } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+/**
+ * Split a display-ready metric (e.g. "60%", "10 weeks", "₹4.2L") into a
+ * count-up-able number plus its surrounding text, so the figure animates
+ * while the unit stays put. Returns `null` for values with no leading
+ * number, which then render verbatim.
+ */
+function parseMetric(
+  value: string
+): { prefix: string; number: number; suffix: string } | null {
+  const match = value.match(/^(\D*)([\d.,]+)(.*)$/);
+  if (!match) return null;
+  const [, prefix = "", digits = "", suffix = ""] = match;
+  const number = Number(digits.replace(/,/g, ""));
+  if (Number.isNaN(number)) return null;
+  return { prefix, number, suffix };
+}
 
 /** "Case Study Snippet" — a compact result story with headline metrics. */
 export function ServiceCaseStudy({ service }: { service: ServiceDetail }) {
   const { caseStudy } = service;
 
   return (
-    <section className="py-24 sm:py-28">
+    <section id="case-study" className="scroll-mt-32 py-24 sm:py-28">
       <Container>
         <Reveal className="relative overflow-hidden rounded-2xl border border-white/10 p-8 sm:p-12">
           <div
@@ -54,24 +72,34 @@ export function ServiceCaseStudy({ service }: { service: ServiceDetail }) {
             </div>
 
             <div className="grid grid-cols-3 gap-4 lg:grid-cols-1">
-              {caseStudy.metrics.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="border-border bg-card/60 rounded-xl border p-4 text-center backdrop-blur lg:text-left"
-                >
+              {caseStudy.metrics.map((metric) => {
+                const parsed = parseMetric(metric.value);
+                const figureClass = cn(
+                  "bg-linear-to-r bg-clip-text text-2xl font-bold text-transparent sm:text-3xl",
+                  service.gradient
+                );
+                return (
                   <div
-                    className={cn(
-                      "bg-linear-to-r bg-clip-text text-2xl font-bold text-transparent sm:text-3xl",
-                      service.gradient
-                    )}
+                    key={metric.label}
+                    className="border-border bg-card/60 rounded-xl border p-4 text-center backdrop-blur lg:text-left"
                   >
-                    {metric.value}
+                    {parsed ? (
+                      <AnimatedCounter
+                        value={parsed.number}
+                        prefix={parsed.prefix}
+                        suffix={parsed.suffix}
+                        duration={1.6}
+                        className={figureClass}
+                      />
+                    ) : (
+                      <div className={figureClass}>{metric.value}</div>
+                    )}
+                    <div className="text-muted-foreground mt-1 text-xs leading-snug sm:text-sm">
+                      {metric.label}
+                    </div>
                   </div>
-                  <div className="text-muted-foreground mt-1 text-xs leading-snug sm:text-sm">
-                    {metric.label}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </Reveal>

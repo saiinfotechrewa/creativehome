@@ -26,7 +26,64 @@ export const metadata: Metadata = {
   },
 };
 
+const SERVICES_URL = `${SITE_CONFIG.url}/services`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${SERVICES_URL}#page`,
+      url: SERVICES_URL,
+      name: `${TITLE} | ${SITE_CONFIG.name}`,
+      description: DESCRIPTION,
+      isPartOf: {
+        "@type": "WebSite",
+        name: SITE_CONFIG.name,
+        url: SITE_CONFIG.url,
+      },
+    },
+    {
+      "@type": "ItemList",
+      itemListElement: SERVICE_CARDS.map((card, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: card.title,
+        description: card.description,
+        url: card.href.startsWith("http")
+          ? card.href
+          : `${SITE_CONFIG.url}${card.href}`,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE_CONFIG.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Services",
+          item: SERVICES_URL,
+        },
+      ],
+    },
+  ],
+};
+
 /** Services overview — hero, 6 service cards, and a closing CTA. */
 export default function ServicesPage() {
-  return <ServicesOverview cards={SERVICE_CARDS} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ServicesOverview cards={SERVICE_CARDS} />
+    </>
+  );
 }

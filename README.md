@@ -19,8 +19,17 @@ automation company. Built as a dark-first SaaS landing experience.
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+cp .env.example .env.local   # set NEXT_PUBLIC_SITE_URL=http://localhost:3000
+npm run dev                  # http://localhost:3000
 ```
+
+## Environment variables
+
+| Variable               | Required | Description                                          |
+| ---------------------- | -------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL` | ✅       | Canonical origin (no trailing slash). Drives absolute URLs in metadata, sitemap, robots, OG, and JSON-LD. Build-time. |
+
+See `.env.example` for the full list (incl. optional analytics/form placeholders).
 
 ## Scripts
 
@@ -38,16 +47,22 @@ npm run dev      # http://localhost:3000
 
 ```
 src/
-├── app/                 # App Router entry (layout, page, globals.css, fonts/)
+├── app/                 # App Router: routes, layout, sitemap/robots/manifest
+│   ├── services/        # /services + 5 service detail pages
+│   ├── solutions/[slug] # 8 product detail pages (SSG)
+│   ├── industries/      # /industries + 7 industry pages
+│   ├── blog/[slug]      # blog listing + posts
+│   ├── pricing, about, contact, book-consultation, login
+│   └── privacy-policy, terms-of-service, refund-policy
 ├── components/
 │   ├── ui/              # Primitives: Button, Card, Badge, Container, SectionHeading
-│   ├── layout/          # Navbar, Footer
-│   ├── sections/        # Hero, Stats, Solutions, Products, Testimonials, CTA
-│   └── shared/          # Framer Motion reveal/stagger helpers
-├── lib/                 # utils (cn), constants, types
-├── hooks/               # Reusable React hooks
-├── data/                # solutions, products, testimonials, navigation
-└── styles/              # Additional scoped stylesheets
+│   ├── layout/          # Navbar, Footer, ScrollToTop
+│   ├── sections/        # Hero, Stats, Solutions, Testimonials, CTA, …
+│   ├── product/ services/ industries/ blog/ legal/   # page-specific sections
+│   └── shared/          # Framer Motion reveal/stagger helpers, JsonLd
+├── lib/                 # utils (cn), constants, types, structured-data, icons
+├── hooks/               # Reusable React hooks (reduced-motion, media-query, …)
+└── data/                # solutions, services, industries, products, blog, navigation
 ```
 
 ## Design tokens
@@ -68,3 +83,14 @@ consumed as utilities (`bg-background`, `text-foreground`, `border-border`, …)
 To change the theme, edit the `@theme` block — every utility updates from there.
 
 Path alias `@/*` maps to `src/*` (configured in `tsconfig.json`).
+
+## Deployment
+
+Built for Docker on **Coolify** using Next.js standalone output
+(`output: "standalone"` in `next.config.ts`). Full instructions, env setup, and
+a pre/post-deploy checklist are in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
+
+```bash
+# Production-parity run with Docker
+NEXT_PUBLIC_SITE_URL=http://localhost:3000 docker compose up --build
+```

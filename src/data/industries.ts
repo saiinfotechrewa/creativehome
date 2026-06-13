@@ -5,6 +5,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "retail-shops",
     name: "Retail & Shops",
+    href: "/industries/retail",
     icon: "store",
     description:
       "Billing counters that never queue up — GST invoicing, barcode POS, stock alerts, and WhatsApp offers that bring customers back.",
@@ -20,6 +21,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "schools-education",
     name: "Schools & Education",
+    href: "/industries/schools-education",
     icon: "graduation-cap",
     description:
       "From admission enquiry to report card — fees, attendance, exams, and a parent portal that keeps families in the loop.",
@@ -35,6 +37,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "cable-tv-operators",
     name: "Cable TV Operators",
+    href: "/industries/cable-tv-operators",
     icon: "tv",
     description:
       "Subscriber packages, monthly billing, and agent-wise collection tracking — know exactly who's paid and who's due, area by area.",
@@ -50,6 +53,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "manufacturing",
     name: "Manufacturing",
+    href: "/industries/manufacturing",
     icon: "factory",
     description:
       "Purchase to production to dispatch on one system — BOM, godown stock, worker attendance, and MIS your management can act on.",
@@ -65,6 +69,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "agencies",
     name: "Agencies",
+    href: "/industries/agencies",
     icon: "briefcase",
     description:
       "Capture every client enquiry, run multi-channel campaigns for your customers, and report results without spreadsheet gymnastics.",
@@ -80,6 +85,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "service-providers",
     name: "Service Providers",
+    href: "/industries/service-providers",
     icon: "wrench",
     description:
       "Bookings, field staff attendance, AMC reminders, and payment follow-ups — run the whole service business from your phone.",
@@ -95,6 +101,7 @@ export const INDUSTRIES: Industry[] = [
   {
     id: "startups",
     name: "Startups",
+    href: "/industries/startups",
     icon: "rocket",
     description:
       "Move fast without duct-tape tooling — custom MVPs, automations, and integrations built by a team that ships in weeks, not quarters.",

@@ -1,11 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { getIcon } from "@/lib/icons";
 import {
   fadeInUp,
@@ -19,11 +21,26 @@ import { cn } from "@/lib/utils";
 export function ServiceHero({ service }: { service: ServiceDetail }) {
   const Icon = getIcon(service.icon);
 
+  // Scroll-linked parallax on the gradient orb — it drifts down and swells
+  // slightly as the hero scrolls away. Disabled under reduced-motion.
+  const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const orbY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const orbScale = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
+
   return (
-    <section className="relative overflow-hidden pt-36 pb-20 sm:pt-44 sm:pb-24">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden pt-36 pb-20 sm:pt-44 sm:pb-24"
+    >
       {/* Service-tinted gradient orb */}
-      <div
+      <motion.div
         aria-hidden
+        style={reducedMotion ? undefined : { y: orbY, scale: orbScale }}
         className={cn(
           "pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-linear-to-br opacity-25 blur-[120px]",
           service.gradient

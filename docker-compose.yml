@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------------------
+# CreativeDox — docker-compose for local production-parity runs.
+#
+#   NEXT_PUBLIC_SITE_URL=http://localhost:3000 docker compose up --build
+#
+# Coolify can also consume this file directly (Build Pack: Docker Compose).
+# In Coolify, set NEXT_PUBLIC_SITE_URL in the app's environment panel.
+# ---------------------------------------------------------------------------
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Baked in at build time (NEXT_PUBLIC_* are inlined into the bundle).
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    image: creativedox:latest
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

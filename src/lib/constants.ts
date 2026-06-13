@@ -1,14 +1,14 @@
 /** Company-wide constants and metadata. */
 export const SITE_CONFIG = {
-  name: "CreativeDox",
-  shortName: "CreativeDox",
+  name: "Sai Computers and Refrigeration",
+  shortName: "Sai Computers and Refrigeration",
   description:
     "CreativeDox builds ready-to-use business software and automation — CRM, GST accounting, attendance, WhatsApp marketing, and custom development for growing businesses across India.",
   tagline: "Business software & automation, engineered to scale.",
   url: "https://creativedox.com",
-  email: "hello@creativedox.com",
-  phone: "+91 555 010 2400",
-  address: "Rewa, Madhya Pradesh, India",
+  email: "saiinfotechrewa@gmail.com",
+  phone: "+91 9993496484",
+  address: "B Block Shilpi Plaza, Rewa, Madhya Pradesh, India",
   ogImage: "/og.png",
   keywords: [
     "business software",
@@ -26,7 +26,7 @@ export const SOCIAL_LINKS = {
   twitter: "https://twitter.com/creativedox",
   youtube: "https://youtube.com/@creativedox",
   instagram: "https://instagram.com/creativedox",
-  whatsapp: "https://wa.me/915550102400",
+  whatsapp: "https://wa.me/919993496484",
 } as const;
 
 /** Shared animation timing tokens for Framer Motion. */

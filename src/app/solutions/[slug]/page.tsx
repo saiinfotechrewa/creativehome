@@ -13,6 +13,8 @@ import { ProductCTA } from "@/components/product/product-cta";
 import { RelatedProducts } from "@/components/product/related-products";
 import { getProductDetail, getProductSlugs } from "@/data/product-details";
 import { getProduct } from "@/data/products";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildProductJsonLd } from "@/lib/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
 
 interface ProductPageProps {
@@ -65,6 +67,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
+      <JsonLd data={buildProductJsonLd(detail, product)} />
       <ProductHero detail={detail} product={product} />
       <PainPoints detail={detail} />
       <ProductFeatures detail={detail} />

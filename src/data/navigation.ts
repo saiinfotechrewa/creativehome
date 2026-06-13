@@ -1,72 +1,12 @@
 import type { CtaConfig, FooterColumn, NavItem } from "@/lib/types";
 import { INDUSTRIES } from "@/data/industries";
 import { SOLUTIONS } from "@/data/solutions";
-
-/** Engineering & delivery services shown in the Services dropdown. */
-const SERVICES: NavItem[] = [
-  {
-    label: "Custom Software Development",
-    href: "/services/custom-software",
-    description: "Web apps and portals built around your workflows.",
-    icon: "code",
-  },
-  {
-    label: "Mobile App Development",
-    href: "/services/mobile-apps",
-    description: "Android & iOS apps for your staff and customers.",
-    icon: "smartphone",
-  },
-  {
-    label: "Website Development",
-    href: "/services/websites",
-    description: "Fast, SEO-ready business websites that convert.",
-    icon: "globe",
-  },
-  {
-    label: "API & Integrations",
-    href: "/services/integrations",
-    description: "Connect Tally, payment gateways, and WhatsApp.",
-    icon: "plug",
-  },
-  {
-    label: "Cloud Hosting & DevOps",
-    href: "/services/cloud-hosting",
-    description: "Managed hosting, daily backups, 99.9% uptime.",
-    icon: "cloud",
-  },
-  {
-    label: "Support & AMC",
-    href: "/services/support-amc",
-    description: "Training, maintenance, and priority support plans.",
-    icon: "life-buoy",
-  },
-];
-
-/** Content resources shown in the Resources dropdown. */
-const RESOURCES: NavItem[] = [
-  {
-    label: "Blog",
-    href: "/blog",
-    description: "Product updates and automation playbooks.",
-    icon: "file-text",
-  },
-  {
-    label: "Guides",
-    href: "/guides",
-    description: "Step-by-step guides to digitize your operations.",
-    icon: "book-open",
-  },
-  {
-    label: "FAQs",
-    href: "/faq",
-    description: "Answers about pricing, data, and onboarding.",
-    icon: "circle-help",
-  },
-];
+import { SERVICE_CARDS } from "@/data/services";
 
 /**
- * Primary header navigation. Solution and industry dropdowns are
- * derived from the data layer so they never drift out of sync.
+ * Primary header navigation. Solution, service, and industry dropdowns are
+ * all derived from the data layer so their links can never drift out of
+ * sync with the pages that actually exist.
  */
 export const NAV_ITEMS: NavItem[] = [
   {
@@ -82,32 +22,37 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     label: "Services",
-    href: "/#solutions",
-    children: SERVICES,
+    href: "/services",
+    megaMenu: true,
+    children: SERVICE_CARDS.map((service) => ({
+      label: service.title,
+      href: service.href,
+      description: service.description,
+      icon: service.icon,
+    })),
   },
   {
     label: "Industries",
-    href: "/#industries",
+    href: "/industries",
     megaMenu: true,
     children: INDUSTRIES.map((industry) => ({
       label: industry.name,
-      href: "/#industries",
+      href: industry.href,
       description: industry.description,
       icon: industry.icon,
     })),
   },
   {
     label: "Pricing",
-    href: "/#pricing",
+    href: "/pricing",
   },
   {
     label: "Case Studies",
-    href: "/#testimonials",
+    href: "/case-studies",
   },
   {
-    label: "Resources",
+    label: "Blog",
     href: "/blog",
-    children: RESOURCES,
   },
 ];
 
@@ -115,14 +60,13 @@ export const NAV_ITEMS: NavItem[] = [
 export const NAV_CTA: { primary: CtaConfig; secondary: CtaConfig } = {
   primary: {
     label: "Book Consultation",
-    href: "/#contact",
+    href: "/book-consultation",
     variant: "primary",
   },
   secondary: {
     label: "Login",
-    href: "https://app.creativedox.com",
+    href: "/login",
     variant: "ghost",
-    external: true,
   },
 };
 
@@ -138,32 +82,31 @@ export const FOOTER_NAV: FooterColumn[] = [
   {
     title: "Company",
     items: [
-      { label: "About Us", href: "/#why-us" },
-      { label: "Case Studies", href: "/#testimonials" },
-      { label: "Industries", href: "/#industries" },
-      { label: "Careers", href: "/careers" },
-      { label: "Contact", href: "/#contact" },
+      { label: "About Us", href: "/about" },
+      { label: "Services", href: "/services" },
+      { label: "Industries", href: "/industries" },
+      { label: "Case Studies", href: "/case-studies" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
     title: "Resources",
     items: [
       { label: "Blog", href: "/blog" },
-      { label: "Guides", href: "/guides" },
-      { label: "FAQs", href: "/faq" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "Book a Demo", href: "/book-consultation" },
       {
         label: "Help Center",
         href: "https://help.creativedox.com",
         external: true,
       },
-      { label: "Book a Demo", href: "/#contact" },
     ],
   },
 ];
 
 /** Legal links shown in the footer bottom bar. */
 export const LEGAL_LINKS: NavItem[] = [
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Refund Policy", href: "/refunds" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Refund Policy", href: "/refund-policy" },
 ];

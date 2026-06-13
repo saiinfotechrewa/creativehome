@@ -71,7 +71,7 @@ function IndustryCard({
 
   return (
     <Link
-      href="/#solutions"
+      href={industry.href}
       onMouseMove={trackSpotlight}
       style={{ "--accent-border": `${industry.hex}4d` } as CSSProperties}
       className={cn(
@@ -133,7 +133,7 @@ function IndustryCard({
       </p>
 
       <span className="text-primary relative mt-4 inline-flex items-center gap-1.5 text-sm font-medium">
-        Explore Solutions
+        Explore Industry
         <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
       </span>
 

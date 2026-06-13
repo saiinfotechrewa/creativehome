@@ -2426,6 +2426,308 @@ export const PRODUCT_DETAILS: ProductDetail[] = [
       "crm-software",
     ],
   },
+
+  /* ---------------------------------------------------------------- */
+  /*  Lead Management                                                  */
+  /* ---------------------------------------------------------------- */
+  {
+    slug: "lead-management",
+    productId: "lead-management",
+    name: "CreativeDox Leads",
+    tagline: "Capture every enquiry. Work every lead. Convert more.",
+    heroDescription:
+      "Enquiries from Facebook, Google, your website, and walk-ins land in one queue — auto-assigned to the right salesperson, followed up on WhatsApp, and tracked to conversion. Built for Indian sales teams that live on their phones.",
+    metaTitle: "Lead Management Software — Capture, Track & Convert Leads",
+    metaDescription:
+      "Lead management software for Indian businesses — sync Facebook & Google leads, auto-assign to your team, nurture on WhatsApp, and track source-wise ROI. From ₹599/month.",
+    color: "text-fuchsia-400",
+    hex: "#e879f9",
+    gradient: "from-fuchsia-500 to-purple-600",
+    painPointsHeading: "Leads coming in, but slipping through the cracks?",
+    painPoints: [
+      {
+        icon: "clock",
+        title: "Slow follow-up loses the sale",
+        description:
+          "An enquiry that isn't answered in the first few minutes usually goes to whoever called back first. Manual lists mean leads sit untouched for hours.",
+      },
+      {
+        icon: "inbox",
+        title: "Leads scattered everywhere",
+        description:
+          "Facebook forms, Google ads, website enquiries, IndiaMART, and walk-ins live in five different places — so leads get missed, duplicated, or forgotten.",
+      },
+      {
+        icon: "user-check",
+        title: "No accountability on the team",
+        description:
+          "Without assignment and tracking, you never know who owns a lead, whether they followed up, or why a hot prospect went cold.",
+      },
+      {
+        icon: "bar-chart",
+        title: "No idea what's actually working",
+        description:
+          "You spend on ads across channels but can't tell which source brings leads that convert — so the marketing budget is mostly guesswork.",
+      },
+    ],
+    features: [
+      {
+        icon: "filter",
+        title: "Multi-channel Capture",
+        description:
+          "Facebook & Instagram lead ads, Google forms, your website, landing pages, and QR codes flow into one inbox automatically — no copy-paste.",
+      },
+      {
+        icon: "repeat",
+        title: "Auto Lead Assignment",
+        description:
+          "Round-robin, territory, or product-based rules route each new lead to the right salesperson the instant it arrives.",
+      },
+      {
+        icon: "message-circle",
+        title: "WhatsApp Nurture",
+        description:
+          "Trigger instant WhatsApp welcomes and drip sequences so every enquiry gets a reply within a minute, day or night.",
+      },
+      {
+        icon: "bell",
+        title: "Follow-up Reminders",
+        description:
+          "Scheduled callbacks, tasks, and overdue alerts make sure no lead is ever forgotten or followed up too late.",
+      },
+      {
+        icon: "scan-line",
+        title: "Duplicate Detection",
+        description:
+          "Matching phone and email across sources merges duplicate enquiries so two reps never chase the same person.",
+      },
+      {
+        icon: "trending-up",
+        title: "Lead Scoring",
+        description:
+          "Score leads by source, budget, and engagement so your team always calls the hottest prospects first.",
+      },
+      {
+        icon: "indian-rupee",
+        title: "Source ROI Tracking",
+        description:
+          "See cost-per-lead and conversion rate for every channel and campaign — and put your budget where it actually pays back.",
+      },
+      {
+        icon: "smartphone",
+        title: "Mobile Sales App",
+        description:
+          "Reps work their pipeline, log calls, and update statuses from their phone — with click-to-call and WhatsApp built in.",
+      },
+      {
+        icon: "bar-chart",
+        title: "Funnel & Team Reports",
+        description:
+          "Visual conversion funnels, rep-wise performance, and stage drop-off reports give you a live read on your sales engine.",
+      },
+    ],
+    modules: [
+      {
+        name: "Lead Inbox",
+        description:
+          "Unified capture from Facebook, Google, website, QR, IndiaMART, and manual entry with instant de-duplication.",
+      },
+      {
+        name: "Assignment Rules",
+        description:
+          "Round-robin, territory, product, and load-based routing with reassignment and escalation.",
+      },
+      {
+        name: "Pipeline & Stages",
+        description:
+          "Customizable stages from New to Won/Lost with drag-and-drop pipeline and reason-for-loss capture.",
+      },
+      {
+        name: "WhatsApp Sequences",
+        description:
+          "Instant auto-replies plus multi-step nurture drips on the official WhatsApp Business API.",
+      },
+      {
+        name: "Tasks & Reminders",
+        description:
+          "Callbacks, meetings, and follow-up tasks with overdue alerts and a daily agenda per rep.",
+      },
+      {
+        name: "Lead Scoring",
+        description:
+          "Rule-based scoring on source, budget, and activity to surface sales-ready leads automatically.",
+      },
+      {
+        name: "Call Logging",
+        description:
+          "Click-to-call, call outcomes, and notes logged against each lead from the mobile app.",
+      },
+      {
+        name: "Source & Campaign ROI",
+        description:
+          "Cost-per-lead, conversion, and revenue attribution by channel, campaign, and ad set.",
+      },
+      {
+        name: "Reports & Funnels",
+        description:
+          "Conversion funnels, rep leaderboards, stage drop-off, and aging-lead reports.",
+      },
+      {
+        name: "Roles & Permissions",
+        description:
+          "Manager, team-lead, and rep roles with data visibility limited to their own leads and teams.",
+      },
+    ],
+    screenshots: [
+      {
+        src: "/screenshots/leads-pipeline.png",
+        alt: "Lead pipeline board with drag-and-drop stages",
+        caption: "Visual pipeline — every lead, every stage, at a glance",
+      },
+      {
+        src: "/screenshots/leads-inbox.png",
+        alt: "Unified multi-channel lead inbox",
+        caption: "One inbox for Facebook, Google, website, and walk-in leads",
+      },
+      {
+        src: "/screenshots/leads-roi.png",
+        alt: "Source-wise lead ROI report",
+        caption: "See which channel actually converts — and what it costs",
+      },
+    ],
+    benefits: [
+      {
+        before: "Leads sit unanswered for hours and go to a competitor",
+        after: "Instant WhatsApp reply and assignment within a minute",
+      },
+      {
+        before: "Enquiries scattered across five platforms and notebooks",
+        after: "Every lead from every source in one organized queue",
+      },
+      {
+        before: "No one knows who owns a lead or if it was followed up",
+        after: "Clear ownership, reminders, and a full activity trail",
+      },
+      {
+        before: "Ad budget spread blindly across channels",
+        after: "Source-wise ROI shows exactly where to spend more",
+      },
+      {
+        before: "Hot prospects forgotten among hundreds of cold ones",
+        after: "Lead scoring puts the best opportunities on top",
+      },
+    ],
+    pricing: [
+      {
+        name: "Starter",
+        priceMonthly: 599,
+        priceAnnual: 479,
+        description: "For small teams getting leads organized for the first time.",
+        features: [
+          "Up to 3 users",
+          "Website & manual lead capture",
+          "Visual pipeline & stages",
+          "Follow-up reminders",
+          "Email support",
+        ],
+        ctaLabel: "Start with Starter",
+      },
+      {
+        name: "Professional",
+        priceMonthly: 1299,
+        priceAnnual: 1039,
+        description: "For growing sales teams running ads across channels.",
+        features: [
+          "Up to 15 users",
+          "Facebook & Google lead sync",
+          "Auto-assignment rules",
+          "WhatsApp nurture sequences",
+          "Lead scoring & source ROI",
+          "Mobile app with click-to-call",
+          "Priority support",
+        ],
+        recommended: true,
+        ctaLabel: "Get Professional",
+      },
+      {
+        name: "Enterprise",
+        priceMonthly: 2999,
+        priceAnnual: 2399,
+        description: "For multi-team operations with custom workflows.",
+        features: [
+          "Unlimited users",
+          "Custom stages & scoring models",
+          "Territory & multi-team routing",
+          "API & CRM/ERP integration",
+          "Advanced attribution reports",
+          "Dedicated account manager",
+        ],
+        ctaLabel: "Talk to Sales",
+      },
+    ],
+    faqs: [
+      {
+        question: "Which lead sources can you connect?",
+        answer:
+          "Facebook & Instagram lead ads, Google lead-form extensions, your website and landing-page forms, QR codes, and IndiaMART — plus manual and bulk Excel entry. New leads appear in one inbox in real time.",
+      },
+      {
+        question: "How fast can leads get a response?",
+        answer:
+          "Instantly. The moment a lead is captured, an auto-reply can go out on WhatsApp and the lead is assigned to a rep with a follow-up task — so first response happens within a minute, even after hours.",
+      },
+      {
+        question: "How does auto-assignment work?",
+        answer:
+          "You set rules — round-robin for fairness, or routing by territory, product, or current workload. Leads can also escalate or reassign automatically if a rep doesn't act within your chosen time window.",
+      },
+      {
+        question: "Does it work on mobile?",
+        answer:
+          "Yes. Reps get a full mobile app to view their pipeline, log calls with click-to-call, send WhatsApp messages, and update lead status on the go — no desktop required.",
+      },
+      {
+        question: "Will it stop duplicate leads?",
+        answer:
+          "Yes. We match on phone and email across every source, so a person who enquires twice is merged into one lead — two reps never end up calling the same prospect.",
+      },
+      {
+        question: "Can I see which ad channel actually converts?",
+        answer:
+          "Absolutely. Source and campaign reports show cost-per-lead, conversion rate, and revenue by channel and ad set, so you can shift budget to what genuinely pays back.",
+      },
+      {
+        question: "Can it connect to my existing CRM or ERP?",
+        answer:
+          "Yes. On the Enterprise plan we integrate via API so qualified leads and won deals sync to your CRM, ERP, or accounting system without double entry.",
+      },
+      {
+        question: "How long does setup take?",
+        answer:
+          "Most teams go live in 1–2 days. We connect your lead sources, import existing leads from Excel, set up assignment rules, and train your team as part of onboarding.",
+      },
+      {
+        question: "Is my lead data secure?",
+        answer:
+          "Data is stored on cloud servers in India with daily backups, encrypted in transit, and accessible only through role-based logins — reps see only their own leads.",
+      },
+      {
+        question: "Can I try it before buying?",
+        answer:
+          "Yes. Book a free demo and we'll set up a trial with your own lead sources so you can evaluate it with your actual team before committing.",
+      },
+    ],
+    integrations: [
+      "Facebook Lead Ads",
+      "Google Ads",
+      "WhatsApp",
+      "IndiaMART",
+      "Website Forms",
+      "Razorpay",
+      "Excel Import/Export",
+    ],
+    relatedProducts: ["crm-software", "marketing-automation", "whatsapp-automation"],
+  },
 ];
 
 /** Look up a product detail page by its slug. */

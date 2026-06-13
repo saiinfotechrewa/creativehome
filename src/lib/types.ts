@@ -96,6 +96,8 @@ export interface Industry {
   name: string;
   icon: IconName;
   description: string;
+  /** Link to the dedicated industry landing page (/industries/[slug]). */
+  href: string;
   /** Ids of the solutions most relevant to this industry. */
   relevantSolutions: string[];
   /** Tailwind text-color class for the card accent (e.g. "text-orange-400"). */
@@ -394,4 +396,101 @@ export interface ServiceCard {
   href: string;
   /** Link label, e.g. "Explore service". */
   cta: string;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Industry landing pages (/industries, /industries/[industry])       */
+/* ------------------------------------------------------------------ */
+
+/** A problem the industry faces before adopting CreativeDox. */
+export interface IndustryPainPoint {
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+/** One step of an industry-specific implementation workflow. */
+export interface IndustryWorkflowStep {
+  /** 1-based position in the sequence. */
+  step: number;
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+/** A headline improvement metric shown in the "Results" section. */
+export interface IndustryResult {
+  /** Display-ready value, e.g. "80%", "3x", "15 hrs". */
+  value: string;
+  label: string;
+  description?: string;
+}
+
+/** Full content model for an industry landing page. */
+export interface IndustryDetail {
+  /** URL slug — /industries/[slug]. */
+  slug: string;
+  /** Full vertical name, e.g. "Retail & Shops". */
+  name: string;
+  /** Short label used in the hero headline ("Software Solutions for X"). */
+  shortName: string;
+  /** Short eyebrow/category label. */
+  eyebrow: string;
+  /** Hero supporting paragraph. */
+  heroDescription: string;
+  /** SEO title/description for generateMetadata. */
+  metaTitle: string;
+  metaDescription: string;
+  icon: IconName;
+  /** Tailwind text-color class for accents (e.g. "text-orange-400"). */
+  color: string;
+  /** Accent hex matching `color`, for spotlight/glow effects. */
+  hex: string;
+  /** Tailwind gradient stops for hero orb and accents. */
+  gradient: string;
+  /** One-liner shown on the overview bento tile. */
+  cardDescription: string;
+  /** Headline stat shown on the bento tile, e.g. "80% fewer billing errors". */
+  highlight: string;
+  /** 4–5 industry-specific problems. */
+  painPoints: IndustryPainPoint[];
+  /** Solution slugs to feature (link to /solutions/[slug]). */
+  solutions: string[];
+  /** Industry-specific implementation steps. */
+  workflow: IndustryWorkflowStep[];
+  /** Improvement metrics (display-ready). */
+  results: IndustryResult[];
+  /** Id of the testimonial to surface (from TESTIMONIALS). */
+  testimonialId: string;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Legal pages (/privacy-policy, /terms-of-service, /refund-policy)   */
+/* ------------------------------------------------------------------ */
+
+/** A single content block inside a legal document section. */
+export type LegalBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[] };
+
+/** A titled, anchored section of a legal document (one TOC entry). */
+export interface LegalSection {
+  /** Slug used for the anchor id and table-of-contents link. */
+  id: string;
+  heading: string;
+  blocks: LegalBlock[];
+}
+
+/** Full content model for a legal/policy page. */
+export interface LegalDocument {
+  /** URL slug — /[slug]. */
+  slug: string;
+  title: string;
+  /** SEO + intro summary. */
+  description: string;
+  /** Last-updated date, ISO `YYYY-MM-DD`. */
+  updated: string;
+  /** Opening paragraph shown above the sections. */
+  intro: string;
+  sections: LegalSection[];
 }

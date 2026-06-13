@@ -1,0 +1,38 @@
+# Keep the build context small and the image clean.
+
+# dependencies & build output (reinstalled/rebuilt inside the image)
+node_modules
+.next
+out
+build
+
+# env & secrets — never bake these into an image
+.env
+.env.*
+!.env.example
+
+# vcs & tooling
+.git
+.gitignore
+.github
+.vscode
+.idea
+.claude
+.playwright-mcp
+
+# docs & local-only files
+README.md
+DEPLOYMENT.md
+creativedox-prompts-v2-animated.md
+*.md
+!next-env.d.ts
+
+# misc
+Dockerfile
+docker-compose.yml
+.dockerignore
+npm-debug.log*
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+coverage

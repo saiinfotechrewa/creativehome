@@ -68,4 +68,20 @@ export const TESTIMONIALS: Testimonial[] = [
     rating: 5,
     avatar: "AM",
   },
+  {
+    id: "farhan-qureshi",
+    quote:
+      "My technicians mark attendance and close jobs from their phones, AMC reminders go out on WhatsApp automatically, and follow-ups stopped slipping. We service 30% more calls a month with the same team.",
+    name: "Farhan Qureshi",
+    role: "Director",
+    company: "CoolCare Services",
+    industry: "Service Provider",
+    rating: 5,
+    avatar: "FQ",
+  },
 ];
+
+/** Look up a testimonial by its id. */
+export function getTestimonial(id: string): Testimonial | undefined {
+  return TESTIMONIALS.find((testimonial) => testimonial.id === id);
+}
