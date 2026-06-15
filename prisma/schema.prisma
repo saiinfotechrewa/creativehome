@@ -1,0 +1,472 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// CreativeDox — Admin Panel Database Schema
+// Prisma + PostgreSQL.  Run:  npx prisma migrate dev / npx prisma db push
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("postgresql://postgres:123456@localhost:5432/creativedox")
+}
+
+// ───────────────────────────── Enums ────────────────────────────────────────
+
+enum AdminRole {
+  SUPERADMIN
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum ContentStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+enum LeadSource {
+  CONSULTATION
+  DEMO
+  CONTACT
+  WHATSAPP
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  NEGOTIATION
+  CONVERTED
+  LOST
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  ACTIVE
+  CANCELLED
+  REFUNDED
+  EXPIRED
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─────────────────────────── Auth & Settings ────────────────────────────────
+
+model AdminUser {
+  id          String    @id @default(cuid())
+  name        String
+  email       String    @unique
+  password    String // bcrypt hash
+  role        AdminRole @default(VIEWER)
+  avatar      String?
+  isActive    Boolean   @default(true)
+  lastLogin   DateTime?
+  permissions Json      @default("[]") // string[] of permission keys
+
+  activities ActivityLog[]
+  mediaFiles MediaFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+model CompanySettings {
+  id            String  @id @default("singleton")
+  companyName   String  @default("CreativeDox")
+  tagline       String?
+  logo          String?
+  darkLogo      String?
+  favicon       String?
+  email         String?
+  phone         String?
+  whatsapp      String?
+  address       Json    @default("{}") // { line1, line2, city, state, pincode, country }
+  businessHours Json    @default("{}") // { mon: "9-6", ... }
+  socialLinks   Json    @default("{}") // { facebook, instagram, linkedin, youtube, twitter }
+  seoDefaults   Json    @default("{}") // { title, description, keywords, ogImage }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomepageSection {
+  id         String  @id @default(cuid())
+  sectionKey String  @unique // hero | stats | products | process | testimonials ...
+  isActive   Boolean @default(true)
+  order      Int     @default(0)
+  content    Json    @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model LegalDocument {
+  id          String    @id @default(cuid())
+  type        String    @unique // terms | privacy | refund | cookies | shipping | disclaimer
+  title       String
+  content     String    @default("") // long-form HTML / MDX
+  version     String?
+  isPublished Boolean   @default(true)
+  effectiveAt DateTime?
+  seo         Json      @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+}
+
+model NavigationMenu {
+  id        String @id @default("singleton")
+  items     Json   @default("[]") // [{ label, href, children: [{ label, href }] }]
+  ctaButton Json   @default("{}") // { label, href }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FooterSettings {
+  id          String  @id @default("singleton")
+  tagline     String?
+  columns     Json    @default("[]") // [{ heading, links: [{ label, href }] }]
+  legalLinks  Json    @default("[]") // [{ label, href }]
+  socialLinks Json    @default("{}") // { facebook, instagram, linkedin, youtube, twitter }
+  newsletter  Json    @default("{}") // { enabled, heading, subtext }
+  copyright   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────── Catalog ──────────────────────────────────────
+
+model Product {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  status          ContentStatus @default(DRAFT)
+  order           Int           @default(0)
+  name            String
+  tagline         String?
+  descriptions    Json          @default("{}") // { short, long }
+  icon            String?
+  color           String?
+  gradient        Json          @default("{}") // { from, to }
+  badge           String?
+  hero            Json          @default("{}")
+  painPoints      Json          @default("[]")
+  features        Json          @default("[]")
+  modules         Json          @default("[]")
+  screenshots     Json          @default("[]")
+  benefits        Json          @default("[]")
+  pricing         Json          @default("{}")
+  faqs            Json          @default("[]")
+  integrations    Json          @default("[]")
+  relatedProducts Json          @default("[]") // string[] of product slugs
+  seo             Json          @default("{}")
+  urls            Json          @default("{}") // { demo, login, buy }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([order])
+}
+
+model Service {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  status       ContentStatus @default(DRAFT)
+  order        Int           @default(0)
+  name         String
+  description  String?
+  icon         String?
+  color        String?
+  hero         Json          @default("{}")
+  deliverables Json          @default("[]")
+  process      Json          @default("[]")
+  technologies Json          @default("[]") // string[]
+  pricingModel Json          @default("{}")
+  seo          Json          @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([order])
+}
+
+model Industry {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  status      ContentStatus @default(DRAFT)
+  order       Int           @default(0)
+  name        String
+  icon        String?
+  color       String?
+  description String?
+  hero        Json          @default("{}")
+  painPoints  Json          @default("[]")
+  solutions   Json          @default("[]") // string[] / objects
+  workflow    Json          @default("[]")
+  results     Json          @default("[]")
+  testimonial Json          @default("{}")
+  seo         Json          @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([order])
+}
+
+// ───────────────────────────── Blog ─────────────────────────────────────────
+
+model BlogPost {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  status        BlogStatus @default(DRAFT)
+  publishDate   DateTime?
+  title         String
+  excerpt       String?
+  content       String // long-form HTML / MDX
+  featuredImage String?
+  categoryId    String?
+  tags          Json       @default("[]") // string[]
+  author        Json       @default("{}") // { name, avatar, role }
+  readTime      Int        @default(0) // minutes
+  seo           Json       @default("{}")
+  views         Int        @default(0)
+
+  category BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([publishDate])
+  @@index([categoryId])
+}
+
+model BlogCategory {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String?
+  order       Int     @default(0)
+  postCount   Int     @default(0)
+
+  posts BlogPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ─────────────────────────── CRM / Sales ────────────────────────────────────
+
+model Lead {
+  id                 String     @id @default(cuid())
+  source             LeadSource @default(CONTACT)
+  status             LeadStatus @default(NEW)
+  priority           Priority   @default(MEDIUM)
+  name               String
+  email              String?
+  phone              String?
+  whatsapp           String?
+  businessName       String?
+  businessType       String?
+  teamSize           String?
+  interestedProducts Json       @default("[]") // string[] of product slugs
+  description        String?
+  consultation       Json       @default("{}") // { date, time, mode, notes }
+  assignedTo         String? // AdminUser id
+  notes              Json       @default("[]") // [{ by, at, text }]
+  communications     Json       @default("[]") // [{ channel, at, summary }]
+  utm                Json       @default("{}") // { source, medium, campaign, term, content }
+
+  customer Customer?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([source])
+  @@index([assignedTo])
+  @@index([email])
+}
+
+model Customer {
+  id             String  @id @default(cuid())
+  name           String
+  email          String  @unique
+  phone          String?
+  whatsapp       String?
+  businessName   String?
+  businessType   String?
+  gstNumber      String?
+  address        Json    @default("{}")
+  activeProducts Json    @default("[]") // [{ slug, plan, since, renewsOn }]
+  totalSpent     Float   @default(0)
+  ordersCount    Int     @default(0)
+  leadId         String? @unique
+
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  orderNumber  String      @unique // auto: CD-YYYY-000123
+  customerId   String?
+  product      Json        @default("{}") // { slug, name, plan, qty }
+  pricing      Json        @default("{}") // { subtotal, tax, discount, total, currency }
+  payment      Json        @default("{}") // { razorpayOrderId, paymentId, signature, status }
+  subscription Json        @default("{}") // { interval, startDate, endDate, autoRenew }
+  invoice      Json        @default("{}") // { number, url, issuedAt }
+  customerInfo Json        @default("{}") // snapshot { name, email, phone, gst, address }
+  status       OrderStatus @default(PENDING)
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([customerId])
+}
+
+// ───────────────────────── Social proof ─────────────────────────────────────
+
+model Testimonial {
+  id           String            @id @default(cuid())
+  status       TestimonialStatus @default(PENDING)
+  isDisplayed  Boolean           @default(false)
+  displayOrder Int               @default(0)
+  quote        String
+  name         String
+  role         String?
+  company      String?
+  industry     String?
+  rating       Int               @default(5)
+  avatar       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([isDisplayed])
+}
+
+model CaseStudy {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  status        ContentStatus @default(DRAFT)
+  title         String
+  client        Json          @default("{}") // { name, logo, industry, size }
+  challenge     String?
+  solution      String?
+  results       Json          @default("[]") // [{ metric, value, label }]
+  productsUsed  Json          @default("[]") // string[] of product slugs
+  testimonial   Json          @default("{}")
+  featuredImage String?
+  seo           Json          @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// ──────────────────────── Integrations & Media ──────────────────────────────
+
+model IntegrationSetting {
+  id             String  @id @default(cuid())
+  integrationKey String  @unique // whatsapp | email | razorpay | analytics | sms | cloudinary
+  isActive       Boolean @default(false)
+  config         Json    @default("{}") // encrypted secrets
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MediaFile {
+  id           String  @id @default(cuid())
+  filename     String
+  originalName String
+  url          String
+  thumbnailUrl String?
+  mimeType     String
+  size         Int // bytes
+  dimensions   Json    @default("{}") // { width, height }
+  folder       String  @default("uploads")
+  alt          String?
+  uploadedBy   String?
+
+  uploader AdminUser? @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([folder])
+  @@index([uploadedBy])
+}
+
+model ActivityLog {
+  id         String  @id @default(cuid())
+  userId     String?
+  userName   String?
+  action     String // create | update | delete | login | export ...
+  module     String // products | leads | orders ...
+  entityId   String?
+  entityName String?
+  details    Json    @default("{}")
+  ipAddress  String?
+
+  user AdminUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([module])
+  @@index([createdAt])
+}
+
+model NotificationSetting {
+  id       String @id @default(cuid())
+  event    String @unique // new_lead | new_order | testimonial_submitted ...
+  channels Json   @default("{}") // { email: bool, whatsapp: bool, inApp: bool, recipients: [] }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

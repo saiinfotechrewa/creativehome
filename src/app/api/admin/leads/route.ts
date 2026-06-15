@@ -1,0 +1,66 @@
+import type { Prisma } from "@prisma/client";
+
+import { prisma } from "@/lib/prisma";
+import { requirePermission, withAuthHandler } from "@/lib/auth-helpers";
+import { PERMISSIONS } from "@/lib/permissions";
+import { paginated, pageMeta, parseQuery } from "@/lib/api-response";
+import { leadListQuerySchema } from "@/lib/validators";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * GET /api/admin/leads — paginated, filterable, searchable leads inbox.
+ * Filters: status, source, priority, assignedTo. Search spans name/email/
+ * phone/businessName. Each row is augmented with the assignee's display name.
+ */
+export const GET = withAuthHandler(async (req: Request) => {
+  await requirePermission(PERMISSIONS.LEADS_VIEW);
+  const q = parseQuery(req, leadListQuerySchema);
+
+  const where: Prisma.LeadWhereInput = {};
+  if (q.status) where.status = q.status;
+  if (q.source) where.source = q.source;
+  if (q.priority) where.priority = q.priority;
+  if (q.assignedTo) {
+    where.assignedTo = q.assignedTo === "unassigned" ? null : q.assignedTo;
+  }
+  if (q.search) {
+    where.OR = [
+      { name: { contains: q.search, mode: "insensitive" } },
+      { email: { contains: q.search, mode: "insensitive" } },
+      { phone: { contains: q.search, mode: "insensitive" } },
+      { businessName: { contains: q.search, mode: "insensitive" } },
+    ];
+  }
+
+  const [leads, total] = await Promise.all([
+    prisma.lead.findMany({
+      where,
+      orderBy: { [q.sort]: q.order },
+      skip: (q.page - 1) * q.pageSize,
+      take: q.pageSize,
+    }),
+    prisma.lead.count({ where }),
+  ]);
+
+  // Resolve assignee display names in one extra query.
+  const assigneeIds = [
+    ...new Set(leads.map((l) => l.assignedTo).filter((v): v is string => !!v)),
+  ];
+  const assignees = assigneeIds.length
+    ? await prisma.adminUser.findMany({
+        where: { id: { in: assigneeIds } },
+        select: { id: true, name: true },
+      })
+    : [];
+  const nameById = new Map(assignees.map((a) => [a.id, a.name]));
+
+  const items = leads.map((lead) => ({
+    ...lead,
+    assignedToName: lead.assignedTo
+      ? (nameById.get(lead.assignedTo) ?? null)
+      : null,
+  }));
+
+  return paginated(items, pageMeta(q.page, q.pageSize, total));
+});
