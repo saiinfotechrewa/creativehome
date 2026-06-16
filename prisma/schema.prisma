@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("postgresql://postgres:123456@localhost:5432/creativedox")
+  url      = env("DATABASE_URL")
 }
 
 // ───────────────────────────── Enums ────────────────────────────────────────
@@ -466,6 +466,18 @@ model NotificationSetting {
   id       String @id @default(cuid())
   event    String @unique // new_lead | new_order | testimonial_submitted ...
   channels Json   @default("{}") // { email: bool, whatsapp: bool, inApp: bool, recipients: [] }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────── System / Ops ───────────────────────────────────
+
+model SystemSetting {
+  id                 String  @id @default("singleton")
+  maintenanceMode    Boolean @default(false)
+  maintenanceMessage String?
+  maintenanceUntil   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

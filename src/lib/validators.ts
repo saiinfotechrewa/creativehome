@@ -303,10 +303,41 @@ export const blogPostSchema = z.object({
   categoryId: z.string().optional().nullable(),
   tags: z.array(z.string()).default([]),
   author: z.record(z.string(), z.unknown()).default({}),
+  // readTime is computed server-side from `content`; any value sent is ignored.
   readTime: z.number().int().min(0).default(0),
   seo: seoSchema.default({}),
 });
 export type BlogPostInput = z.infer<typeof blogPostSchema>;
+
+/** PUT body for a post — every field optional, slug renames allowed. */
+export const blogPostUpdateSchema = blogPostSchema.partial();
+
+export const BLOG_POST_SORT_FIELDS = [
+  "createdAt",
+  "updatedAt",
+  "publishDate",
+  "title",
+  "views",
+] as const;
+
+/** Query params for the admin Blog posts list. */
+export const blogPostListQuerySchema = paginationSchema.extend({
+  sort: z.enum(BLOG_POST_SORT_FIELDS).default("createdAt"),
+  status: blogStatusSchema.optional(),
+  categoryId: z.string().optional(),
+});
+export type BlogPostListQuery = z.infer<typeof blogPostListQuerySchema>;
+
+/** PUT body for a category. */
+export const blogCategoryUpdateSchema = blogCategorySchema.partial();
+
+/** Public blog feed query: published-only, paginated, category/tag filters. */
+export const publicBlogListQuerySchema = paginationSchema.extend({
+  /** Filter by category *slug* (friendlier for public URLs than id). */
+  category: z.string().optional(),
+  tag: z.string().optional(),
+});
+export type PublicBlogListQuery = z.infer<typeof publicBlogListQuerySchema>;
 
 // ─────────────────────────── CRM / Sales ────────────────────────────────────
 
@@ -442,9 +473,52 @@ export const leadListQuerySchema = paginationSchema.extend({
   status: leadStatusSchema.optional(),
   source: leadSourceSchema.optional(),
   priority: prioritySchema.optional(),
+  businessType: z.string().optional(),
   assignedTo: z.string().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
 });
 export type LeadListQuery = z.infer<typeof leadListQuerySchema>;
+
+/** PUT /[id]/priority — move a lead up/down the queue. */
+export const leadPriorityUpdateSchema = z.object({
+  priority: prioritySchema,
+});
+
+/** POST /[id]/communications — send (and log) an outbound message. */
+export const leadCommunicationSchema = z.object({
+  channel: z.enum(["email", "whatsapp"]),
+  subject: z.string().max(200).optional(),
+  message: z.string().min(1, "Message is required").max(5000),
+});
+
+/** POST /[id]/convert — promote a lead to a customer. */
+export const leadConvertSchema = z.object({
+  // Customer.email is required + unique; fall back to the lead's email if blank.
+  email: emailSchema.optional(),
+  phone: z.string().optional(),
+  gstNumber: z
+    .string()
+    .regex(
+      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+      "Invalid GSTIN",
+    )
+    .optional()
+    .or(z.literal("")),
+  address: z.record(z.string(), z.unknown()).optional(),
+});
+
+/** GET /export — same filters as the inbox, minus pagination. */
+export const leadExportQuerySchema = z.object({
+  status: leadStatusSchema.optional(),
+  source: leadSourceSchema.optional(),
+  priority: prioritySchema.optional(),
+  businessType: z.string().optional(),
+  assignedTo: z.string().optional(),
+  search: z.string().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+});
 
 export const customerSchema = z.object({
   name: z.string().min(2).max(120),
@@ -461,6 +535,23 @@ export const customerSchema = z.object({
   address: z.record(z.string(), z.unknown()).default({}),
 });
 
+/** PUT body for a customer — all fields optional. */
+export const customerUpdateSchema = customerSchema.partial();
+
+export const CUSTOMER_SORT_FIELDS = [
+  "createdAt",
+  "updatedAt",
+  "totalSpent",
+  "ordersCount",
+  "name",
+] as const;
+
+/** Query params for the admin Customers list (search spans name/email/phone). */
+export const customerListQuerySchema = paginationSchema.extend({
+  sort: z.enum(CUSTOMER_SORT_FIELDS).default("createdAt"),
+});
+export type CustomerListQuery = z.infer<typeof customerListQuerySchema>;
+
 export const orderSchema = z.object({
   customerId: z.string().optional().nullable(),
   product: z.record(z.string(), z.unknown()).default({}),
@@ -468,6 +559,78 @@ export const orderSchema = z.object({
   subscription: z.record(z.string(), z.unknown()).default({}),
   customerInfo: z.record(z.string(), z.unknown()).default({}),
   status: orderStatusSchema.default("PENDING"),
+});
+
+export const ORDER_SORT_FIELDS = ["createdAt", "updatedAt", "status"] as const;
+
+/** Query params for the admin Orders list. */
+export const orderListQuerySchema = paginationSchema.extend({
+  sort: z.enum(ORDER_SORT_FIELDS).default("createdAt"),
+  status: orderStatusSchema.optional(),
+  customerId: z.string().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+});
+export type OrderListQuery = z.infer<typeof orderListQuerySchema>;
+
+/** PUT /[id]/status — move an order along its lifecycle. */
+export const orderStatusUpdateSchema = z.object({
+  status: orderStatusSchema,
+  note: z.string().max(2000).optional(),
+});
+
+/** POST /[id]/refund — full or partial refund. */
+export const refundSchema = z.object({
+  /** Amount in major units (₹). Omit for a full refund. */
+  amount: z.number().positive().optional(),
+  reason: z.string().max(500).optional(),
+  speed: z.enum(["normal", "optimum"]).default("normal"),
+});
+
+/**
+ * POST /api/public/orders — checkout. Creates a PENDING order + a Razorpay
+ * order the client opens in the Razorpay checkout widget. `hp` is a honeypot.
+ */
+export const publicOrderCreateSchema = z.object({
+  product: z.object({
+    slug: slugSchema,
+    name: z.string().min(1).max(160),
+    plan: z.string().max(80).optional(),
+    qty: z.number().int().min(1).max(999).default(1),
+  }),
+  pricing: z.object({
+    subtotal: z.number().nonnegative(),
+    tax: z.number().nonnegative().default(0),
+    discount: z.number().nonnegative().default(0),
+    total: z.number().positive("Order total must be greater than zero"),
+    currency: z.string().length(3).default("INR"),
+  }),
+  subscription: z
+    .object({
+      interval: z.enum(["monthly", "yearly", "one_time"]).default("one_time"),
+      autoRenew: z.boolean().default(false),
+    })
+    .optional(),
+  customer: z.object({
+    name: z.string().min(2).max(120),
+    email: emailSchema,
+    phone: phoneSchema.optional().or(z.literal("")),
+    gstNumber: z.string().max(20).optional(),
+    address: z.record(z.string(), z.unknown()).optional(),
+  }),
+  hp: z.string().max(0, "Bot detected").optional(),
+});
+export type PublicOrderInput = z.infer<typeof publicOrderCreateSchema>;
+
+/**
+ * POST /api/public/orders/verify — the Razorpay checkout success handler posts
+ * these three fields back so we can confirm payment instantly (the webhook
+ * reconciles independently and idempotently).
+ */
+export const paymentVerifySchema = z.object({
+  razorpayOrderId: z.string().min(1),
+  razorpayPaymentId: z.string().min(1),
+  razorpaySignature: z.string().min(1),
 });
 
 // ───────────────────── Social proof & misc ──────────────────────────────────
@@ -485,19 +648,76 @@ export const testimonialSchema = z.object({
   avatar: z.string().optional(),
 });
 
+/** PUT body for a testimonial — all fields optional. */
+export const testimonialUpdateSchema = testimonialSchema.partial();
+
+export const TESTIMONIAL_SORT_FIELDS = [
+  "createdAt",
+  "displayOrder",
+  "rating",
+] as const;
+
+/** Query params for the admin Testimonials list. */
+export const testimonialListQuerySchema = paginationSchema.extend({
+  sort: z.enum(TESTIMONIAL_SORT_FIELDS).default("createdAt"),
+  status: testimonialStatusSchema.optional(),
+  isDisplayed: z
+    .union([z.literal("true"), z.literal("false")])
+    .transform((v) => v === "true")
+    .optional(),
+});
+export type TestimonialListQuery = z.infer<typeof testimonialListQuerySchema>;
+
+/** Approve / reject (or move back to pending). */
+export const testimonialStatusSchema_update = z.object({
+  status: testimonialStatusSchema,
+});
+
+/** Show / hide a testimonial on the public site. */
+export const testimonialDisplaySchema = z.object({
+  isDisplayed: z.boolean(),
+});
+
+/** Reorder payload: ordered list of testimonial ids → displayOrder = index. */
+export const testimonialReorderSchema = z.object({
+  order: z.array(z.string().min(1)).min(1, "Provide at least one id"),
+});
+
 export const caseStudySchema = z.object({
   slug: slugSchema,
   status: contentStatusSchema.default("DRAFT"),
   title: z.string().min(3).max(160),
   client: z.record(z.string(), z.unknown()).default({}),
-  challenge: z.string().optional(),
-  solution: z.string().optional(),
+  challenge: z.string().optional(), // rich text (HTML / MDX)
+  solution: z.string().optional(), // rich text (HTML / MDX)
   results: z.array(z.unknown()).default([]),
   productsUsed: z.array(z.string()).default([]),
   testimonial: z.record(z.string(), z.unknown()).default({}),
   featuredImage: z.string().optional(),
   seo: seoSchema.default({}),
 });
+
+/** PUT body for a case study — all fields optional, slug renames allowed. */
+export const caseStudyUpdateSchema = caseStudySchema.partial();
+
+export const CASE_STUDY_SORT_FIELDS = [
+  "createdAt",
+  "updatedAt",
+  "title",
+  "status",
+] as const;
+
+/** Query params for the admin Case Studies list. */
+export const caseStudyListQuerySchema = paginationSchema.extend({
+  sort: z.enum(CASE_STUDY_SORT_FIELDS).default("createdAt"),
+  status: contentStatusSchema.optional(),
+  /** Include soft-deleted (ARCHIVED) records — admin only. */
+  includeArchived: z
+    .union([z.literal("true"), z.literal("false")])
+    .transform((v) => v === "true")
+    .default("false"),
+});
+export type CaseStudyListQuery = z.infer<typeof caseStudyListQuerySchema>;
 
 export const integrationSettingSchema = z.object({
   integrationKey: z.enum([
@@ -516,3 +736,127 @@ export const notificationSettingSchema = z.object({
   event: z.string().min(1).max(60),
   channels: z.record(z.string(), z.unknown()).default({}),
 });
+
+// ───────────────────── Integrations (admin) ─────────────────────────────────
+
+export const integrationKeySchema = z.enum([
+  "whatsapp",
+  "email",
+  "razorpay",
+  "analytics",
+  "sms",
+  "cloudinary",
+]);
+export type IntegrationKeyInput = z.infer<typeof integrationKeySchema>;
+
+/**
+ * PUT body for a single integration. `config` is a flat key→value map; secret
+ * fields the client leaves as their masked placeholder (•••) are ignored and
+ * the stored value is preserved (see `@/lib/admin/integrations`).
+ */
+export const integrationUpdateSchema = z.object({
+  isActive: z.boolean().optional(),
+  config: z.record(z.string(), z.unknown()).default({}),
+});
+
+/** Optional body for POST /test — an address to send a probe message to. */
+export const integrationTestSchema = z
+  .object({
+    to: z.string().max(200).optional(),
+  })
+  .default({});
+
+// ───────────────────────────── Media ────────────────────────────────────────
+
+export const MEDIA_SORT_FIELDS = ["createdAt", "size", "filename"] as const;
+
+/** Query params for the admin Media library. */
+export const mediaListQuerySchema = paginationSchema.extend({
+  sort: z.enum(MEDIA_SORT_FIELDS).default("createdAt"),
+  folder: z.string().max(120).optional(),
+  /** Filter by mime prefix or exact type, e.g. `image/png` or `image`. */
+  mimeType: z.string().max(60).optional(),
+});
+export type MediaListQuery = z.infer<typeof mediaListQuerySchema>;
+
+/** PUT body for a media file — rename its folder / edit alt text. */
+export const mediaUpdateSchema = z
+  .object({
+    alt: z.string().max(300).optional(),
+    folder: z
+      .string()
+      .max(120)
+      .regex(/^[a-zA-Z0-9_\-/]+$/, "Folder may contain letters, numbers, - _ /")
+      .optional(),
+  })
+  .refine((d) => d.alt !== undefined || d.folder !== undefined, {
+    message: "Provide alt text or a folder to update",
+  });
+
+// ───────────────────────────── Analytics ────────────────────────────────────
+
+/** Window selector for analytics endpoints (defaults to the last 30 days). */
+export const analyticsQuerySchema = z.object({
+  days: z.coerce.number().int().min(1).max(365).default(30),
+});
+export type AnalyticsQuery = z.infer<typeof analyticsQuerySchema>;
+
+// ─────────────────────────────── Team ───────────────────────────────────────
+
+/** Create / invite a team member. Password optional → an invite is generated. */
+export const teamInviteSchema = z.object({
+  name: z.string().min(2).max(80),
+  email: emailSchema,
+  role: adminRoleSchema.default("VIEWER"),
+  permissions: z.array(z.string()).default([]),
+  password: z.string().min(8).max(72).optional(),
+});
+export type TeamInviteInput = z.infer<typeof teamInviteSchema>;
+
+/** Update a team member's role / permissions / active flag. */
+export const teamUpdateSchema = z
+  .object({
+    name: z.string().min(2).max(80).optional(),
+    role: adminRoleSchema.optional(),
+    permissions: z.array(z.string()).optional(),
+    isActive: z.boolean().optional(),
+    avatar: z.string().url().optional().or(z.literal("")),
+  })
+  .refine((d) => Object.keys(d).length > 0, {
+    message: "Provide at least one field to update",
+  });
+
+export const ACTIVITY_LOG_SORT_FIELDS = ["createdAt"] as const;
+
+/** Query params for the activity log feed (Team → Activity). */
+export const activityLogQuerySchema = paginationSchema.extend({
+  sort: z.enum(ACTIVITY_LOG_SORT_FIELDS).default("createdAt"),
+  module: z.string().max(60).optional(),
+  action: z.string().max(60).optional(),
+  userId: z.string().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+});
+export type ActivityLogQuery = z.infer<typeof activityLogQuerySchema>;
+
+// ─────────────────────────────── System ─────────────────────────────────────
+
+/** Toggle maintenance mode on/off with an optional public message. */
+export const maintenanceSchema = z.object({
+  enabled: z.boolean(),
+  message: z.string().max(300).optional(),
+  /** Optional ISO timestamp the maintenance window is expected to end. */
+  until: z.coerce.date().optional().nullable(),
+});
+
+/** Cache clear / ISR revalidation request. */
+export const cacheClearSchema = z
+  .object({
+    paths: z.array(z.string().min(1)).max(100).optional(),
+    tags: z.array(z.string().min(1)).max(100).optional(),
+    /** Revalidate the whole site layout (`/`, layout). */
+    all: z.boolean().optional(),
+  })
+  .refine((d) => d.all || d.paths?.length || d.tags?.length, {
+    message: "Provide paths, tags, or set all=true",
+  });

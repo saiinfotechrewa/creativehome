@@ -21,8 +21,16 @@ export const GET = withAuthHandler(async (req: Request) => {
   if (q.status) where.status = q.status;
   if (q.source) where.source = q.source;
   if (q.priority) where.priority = q.priority;
+  if (q.businessType) {
+    where.businessType = { contains: q.businessType, mode: "insensitive" };
+  }
   if (q.assignedTo) {
     where.assignedTo = q.assignedTo === "unassigned" ? null : q.assignedTo;
+  }
+  if (q.dateFrom || q.dateTo) {
+    where.createdAt = {};
+    if (q.dateFrom) where.createdAt.gte = q.dateFrom;
+    if (q.dateTo) where.createdAt.lte = q.dateTo;
   }
   if (q.search) {
     where.OR = [

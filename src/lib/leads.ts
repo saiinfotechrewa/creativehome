@@ -1,4 +1,4 @@
-import type { Lead, LeadSource, Prisma, Priority } from "@prisma/client";
+import type { Customer, Lead, LeadSource, Prisma, Priority } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-logger";
@@ -79,4 +79,81 @@ export async function createLead(input: CreateLeadInput): Promise<Lead> {
   });
 
   return lead;
+}
+
+/** Thrown by {@link convertLeadToCustomer} when conversion can't proceed. */
+export class LeadConversionError extends Error {
+  constructor(
+    message: string,
+    public status = 400,
+  ) {
+    super(message);
+    this.name = "LeadConversionError";
+  }
+}
+
+export interface ConvertLeadOverrides {
+  email?: string;
+  phone?: string;
+  gstNumber?: string;
+  address?: Record<string, unknown>;
+}
+
+/**
+ * Promote a lead to a customer and mark the lead CONVERTED. Idempotent on the
+ * already-linked case; refuses to silently hijack an existing customer that
+ * belongs to a different lead.
+ */
+export async function convertLeadToCustomer(
+  lead: Lead,
+  overrides: ConvertLeadOverrides = {},
+): Promise<Customer> {
+  const email = (overrides.email ?? lead.email ?? "").trim();
+  if (!email) {
+    throw new LeadConversionError(
+      "An email is required to create a customer",
+      400,
+    );
+  }
+
+  // Already converted? Return the linked customer instead of duplicating.
+  const linked = await prisma.customer.findUnique({ where: { leadId: lead.id } });
+  if (linked) return linked;
+
+  const byEmail = await prisma.customer.findUnique({ where: { email } });
+  if (byEmail) {
+    if (byEmail.leadId && byEmail.leadId !== lead.id) {
+      throw new LeadConversionError(
+        "A customer with this email is already linked to another lead",
+        409,
+      );
+    }
+    const customer = await prisma.customer.update({
+      where: { id: byEmail.id },
+      data: { leadId: lead.id },
+    });
+    await prisma.lead.update({ where: { id: lead.id }, data: { status: "CONVERTED" } });
+    return customer;
+  }
+
+  const customer = await prisma.customer.create({
+    data: {
+      name: lead.name,
+      email,
+      phone: overrides.phone ?? lead.phone ?? null,
+      whatsapp: lead.whatsapp ?? null,
+      businessName: lead.businessName ?? null,
+      businessType: lead.businessType ?? null,
+      gstNumber: overrides.gstNumber || null,
+      address: (overrides.address ?? {}) as Prisma.InputJsonValue,
+      leadId: lead.id,
+    },
+  });
+
+  await prisma.lead.update({
+    where: { id: lead.id },
+    data: { status: "CONVERTED" },
+  });
+
+  return customer;
 }
