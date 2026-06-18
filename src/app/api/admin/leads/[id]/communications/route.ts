@@ -35,6 +35,7 @@ export const POST = withAuthHandler(async (req: Request, ctx: RouteContext) => {
   );
 
   let sent = false;
+  let status: string;
   if (channel === "email") {
     if (!existing.email) return fail("Lead has no email address", 422);
     sent = await sendEmail({
@@ -42,10 +43,16 @@ export const POST = withAuthHandler(async (req: Request, ctx: RouteContext) => {
       subject: subject || "A message from CreativeDox",
       html: `<div style="font-family:system-ui,Arial,sans-serif;white-space:pre-wrap">${message}</div>`,
     });
-  } else {
+    status = sent ? "sent" : "not_delivered";
+  } else if (channel === "whatsapp") {
     const to = existing.whatsapp ?? existing.phone;
     if (!to) return fail("Lead has no WhatsApp/phone number", 422);
     sent = await sendWhatsApp(to, message);
+    status = sent ? "sent" : "not_delivered";
+  } else {
+    // `call` — manual call logged after the fact; nothing to dispatch.
+    sent = true;
+    status = "logged";
   }
 
   const entry = {
@@ -56,7 +63,7 @@ export const POST = withAuthHandler(async (req: Request, ctx: RouteContext) => {
     by: user.id,
     byName: user.name ?? null,
     at: new Date().toISOString(),
-    status: sent ? "sent" : "not_delivered",
+    status,
   };
 
   const current = Array.isArray(existing.communications)

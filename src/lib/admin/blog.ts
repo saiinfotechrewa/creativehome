@@ -425,8 +425,8 @@ export const blogCategoriesAdminApi = {
 
 // ─────────────────────────── Public blog API ────────────────────────────────
 
-function publicGuard(req: Request): Response | null {
-  const limit = rateLimit(
+async function publicGuard(req: Request): Promise<Response | null> {
+  const limit = await rateLimit(
     `public:blog:${getClientIp(req)}`,
     PUBLIC_RATE.limit,
     PUBLIC_RATE.windowMs,
@@ -435,7 +435,7 @@ function publicGuard(req: Request): Response | null {
 }
 
 const listPublicPosts = withAuthHandler(async (req: Request) => {
-  const blocked = publicGuard(req);
+  const blocked = await publicGuard(req);
   if (blocked) return blocked;
 
   const q = parseQuery(req, publicBlogListQuerySchema);
@@ -467,7 +467,7 @@ const listPublicPosts = withAuthHandler(async (req: Request) => {
 });
 
 const getPublicPost = withAuthHandler(async (req: Request, ctx: SlugCtx) => {
-  const blocked = publicGuard(req);
+  const blocked = await publicGuard(req);
   if (blocked) return blocked;
 
   const { slug } = await ctx.params;
@@ -486,7 +486,7 @@ const getPublicPost = withAuthHandler(async (req: Request, ctx: SlugCtx) => {
 });
 
 const listPublicCategories = withAuthHandler(async (req: Request) => {
-  const blocked = publicGuard(req);
+  const blocked = await publicGuard(req);
   if (blocked) return blocked;
 
   const categories = await prisma.blogCategory.findMany({

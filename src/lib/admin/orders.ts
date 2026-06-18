@@ -249,7 +249,7 @@ export const ordersAdminApi = { list, getById, setStatus, refund, invoice };
 
 const createPublic = withAuthHandler(async (req: Request) => {
   const ip = getClientIp(req);
-  if (!rateLimit(`public:orders:${ip}`, 10, 60_000).success) {
+  if (!(await rateLimit(`public:orders:${ip}`, 10, 60_000)).success) {
     return fail("Too many requests. Please try again in a minute.", 429);
   }
 
@@ -329,7 +329,7 @@ const createPublic = withAuthHandler(async (req: Request) => {
  */
 const verifyPublic = withAuthHandler(async (req: Request) => {
   const ip = getClientIp(req);
-  if (!rateLimit(`public:orders-verify:${ip}`, 20, 60_000).success) {
+  if (!(await rateLimit(`public:orders-verify:${ip}`, 20, 60_000)).success) {
     return fail("Too many requests. Please try again in a minute.", 429);
   }
 

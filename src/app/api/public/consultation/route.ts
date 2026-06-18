@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
  */
 export const POST = withAuthHandler(async (req: Request) => {
   const ip = getClientIp(req);
-  if (!rateLimit(`public:consultation:${ip}`, 5, 60_000).success) {
+  if (!(await rateLimit(`public:consultation:${ip}`, 5, 60_000)).success) {
     return fail("Too many requests. Please try again in a minute.", 429);
   }
 

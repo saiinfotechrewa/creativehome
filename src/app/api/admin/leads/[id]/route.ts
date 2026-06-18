@@ -92,3 +92,31 @@ export const PUT = withAuthHandler(async (req: Request, ctx: RouteContext) => {
 
   return ok(lead);
 });
+
+/**
+ * DELETE /api/admin/leads/[id] — permanently remove a lead. Any linked customer
+ * is preserved (the FK is `onDelete: SetNull`), so conversions aren't lost.
+ */
+export const DELETE = withAuthHandler(
+  async (req: Request, ctx: RouteContext) => {
+    const user = await requirePermission(PERMISSIONS.LEADS_MANAGE);
+    const { id } = await ctx.params;
+
+    const existing = await prisma.lead.findUnique({ where: { id } });
+    if (!existing) return fail("Lead not found", 404);
+
+    await prisma.lead.delete({ where: { id } });
+
+    await logActivity({
+      userId: user.id,
+      userName: user.name,
+      action: "delete",
+      module: "leads",
+      entityId: id,
+      entityName: existing.name,
+      ipAddress: getClientIp(req),
+    });
+
+    return ok({ id });
+  },
+);

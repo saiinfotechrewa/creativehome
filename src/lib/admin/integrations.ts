@@ -46,12 +46,73 @@ type KeyCtx = { params: Promise<{ key: string }> };
  * masked on read.
  */
 const INTEGRATION_FIELDS: Record<IntegrationKey, { clear: string[] }> = {
-  whatsapp: { clear: ["accountSid", "fromNumber", "messagingServiceSid"] },
-  email: { clear: ["host", "port", "from", "fromEmail", "fromName", "user"] },
-  razorpay: { clear: ["keyId"] },
-  analytics: { clear: ["provider", "domain", "measurementId"] },
-  sms: { clear: ["accountSid", "fromNumber"] },
-  cloudinary: { clear: ["cloudName", "apiKey", "uploadFolder"] },
+  // `provider` and other non-secret display/settings fields are kept in clear
+  // so they round-trip readable (a masked provider would break the selector).
+  whatsapp: {
+    clear: [
+      "provider",
+      "accountSid",
+      "fromNumber",
+      "messagingServiceSid",
+      "apiUrl",
+      "phoneNumberId",
+      "businessAccountId",
+    ],
+  },
+  email: {
+    clear: [
+      "provider",
+      "host",
+      "port",
+      "from",
+      "fromEmail",
+      "fromName",
+      "user",
+      "region",
+      "accessKeyId",
+    ],
+  },
+  razorpay: {
+    clear: [
+      "keyId",
+      "mode",
+      "currency",
+      "autoCapture",
+      "gstRate",
+      "invoicePrefix",
+      "webhookEvents",
+    ],
+  },
+  analytics: {
+    clear: [
+      "provider",
+      "domain",
+      "measurementId",
+      "gtmId",
+      "fbPixelId",
+      "hotjarId",
+      "clarityId",
+      "ga4Enabled",
+      "gtmEnabled",
+      "fbPixelEnabled",
+      "hotjarEnabled",
+      "clarityEnabled",
+    ],
+  },
+  sms: { clear: ["provider", "accountSid", "fromNumber", "senderId"] },
+  cloudinary: {
+    clear: [
+      "provider",
+      "cloudName",
+      "apiKey",
+      "uploadFolder",
+      "maxSizeMb",
+      "autoOptimize",
+      "bucket",
+      "region",
+      "accessKeyId",
+    ],
+  },
 };
 
 const MASK = "••••";

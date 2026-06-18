@@ -10,33 +10,77 @@ import { Reveal, Stagger, StaggerItem } from "@/components/shared/motion";
 import { SOLUTIONS } from "@/data/solutions";
 import { getIcon } from "@/lib/icons";
 import type { Solution } from "@/lib/types";
+import type { CardContent, SectionHeadingContent } from "@/lib/homepage-sections";
 import { cn, trackSpotlight } from "@/lib/utils";
 
 /** First 9 fill the 3×3 grid; the 10th (Custom Development) goes wide. */
 const GRID_SOLUTIONS = SOLUTIONS.slice(0, 9);
 const HIGHLIGHT_SOLUTION = SOLUTIONS[9];
 
-export function Solutions() {
+/** Minimal render shape shared by static `Solution`s and CMS `CardContent`. */
+interface RenderCard {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+  href: string;
+  color: string;
+  hex: string;
+}
+
+const fromSolution = (s: Solution): RenderCard => ({
+  key: s.id,
+  icon: s.icon,
+  title: s.title,
+  description: s.shortDescription,
+  href: s.href,
+  color: s.color,
+  hex: s.hex,
+});
+
+const fromContent = (c: CardContent, i: number): RenderCard => ({
+  key: `${c.title}-${i}`,
+  icon: c.icon,
+  title: c.title,
+  description: c.description,
+  href: c.link,
+  color: c.color,
+  hex: c.hex,
+});
+
+export function Solutions({
+  content,
+}: {
+  content?: { heading: SectionHeadingContent | null; items: CardContent[] } | null;
+}) {
+  const cards = content?.items.length
+    ? content.items.map(fromContent)
+    : GRID_SOLUTIONS.map(fromSolution);
+  const highlight = content?.items.length ? null : HIGHLIGHT_SOLUTION;
+
   return (
     <section id="solutions" className="scroll-mt-20 pt-28 pb-24 sm:pt-[120px]">
       <Container>
         <SectionHeading
           eyebrow="Our Solutions"
-          title="Software Solutions for Every Business Need"
-          description="From attendance tracking to full business automation — we have the tools to streamline your operations."
+          title={content?.heading?.title || "Software Solutions for Every Business Need"}
+          description={
+            content?.heading?.description ||
+            "From attendance tracking to full business automation — we have the tools to streamline your operations."
+          }
         />
 
         <Stagger className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {GRID_SOLUTIONS.map((solution) => (
-            <StaggerItem key={solution.id} className="h-full">
-              <SolutionCard solution={solution} />
+          {cards.map((card) => (
+            <StaggerItem key={card.key} className="h-full">
+              <SolutionCard card={card} />
             </StaggerItem>
           ))}
         </Stagger>
 
-        {HIGHLIGHT_SOLUTION ? (
+        {highlight ? (
           <Reveal className="mt-5">
-            <HighlightCard solution={HIGHLIGHT_SOLUTION} />
+            <HighlightCard solution={highlight} />
           </Reveal>
         ) : null}
 
@@ -63,14 +107,14 @@ export function Solutions() {
 /*  Cards                                                              */
 /* ------------------------------------------------------------------ */
 
-function SolutionCard({ solution }: { solution: Solution }) {
-  const Icon = getIcon(solution.icon);
+function SolutionCard({ card }: { card: RenderCard }) {
+  const Icon = getIcon(card.icon);
 
   return (
     <Link
-      href={solution.href}
+      href={card.href}
       onMouseMove={trackSpotlight}
-      style={{ "--accent-border": `${solution.hex}4d` } as CSSProperties}
+      style={{ "--accent-border": `${card.hex}4d` } as CSSProperties}
       className="group bg-card relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1e1e22] p-7 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-(--accent-border)"
     >
       {/* Cursor-following spotlight in the solution's accent color */}
@@ -78,28 +122,28 @@ function SolutionCard({ solution }: { solution: Solution }) {
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
         style={{
-          background: `radial-gradient(280px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${solution.hex}14, transparent 70%)`,
+          background: `radial-gradient(280px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${card.hex}14, transparent 70%)`,
         }}
       />
 
       <span
         className={cn(
           "relative grid h-12 w-12 place-items-center rounded-xl",
-          solution.color
+          card.color
         )}
         style={{
-          backgroundColor: `${solution.hex}1a`,
-          boxShadow: `0 0 24px -6px ${solution.hex}66`,
+          backgroundColor: `${card.hex}1a`,
+          boxShadow: `0 0 24px -6px ${card.hex}66`,
         }}
       >
         <Icon className="h-5 w-5" />
       </span>
 
       <h3 className="text-foreground relative mt-5 text-xl font-semibold">
-        {solution.title}
+        {card.title}
       </h3>
       <p className="text-muted relative mt-2 line-clamp-2 text-sm leading-relaxed">
-        {solution.shortDescription}
+        {card.description}
       </p>
 
       <span className="text-primary relative mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium">

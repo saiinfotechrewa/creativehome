@@ -10,6 +10,7 @@ import { INDUSTRIES } from "@/data/industries";
 import { getSolution } from "@/data/solutions";
 import { getIcon } from "@/lib/icons";
 import type { Industry } from "@/lib/types";
+import type { CardContent, SectionHeadingContent } from "@/lib/homepage-sections";
 import { cn, trackSpotlight } from "@/lib/utils";
 
 type CardSize = "large" | "medium" | "small";
@@ -25,7 +26,58 @@ const CARD_SIZE: Record<string, CardSize> = {
   startups: "small",
 };
 
-export function Industries() {
+/** Render shape shared by static `Industry`s and CMS `CardContent`. */
+interface RenderCard {
+  key: string;
+  icon: string;
+  name: string;
+  description: string;
+  href: string;
+  color: string;
+  hex: string;
+  gradient: string;
+  size: CardSize;
+  tags: string[];
+}
+
+const fromIndustry = (ind: Industry): RenderCard => ({
+  key: ind.id,
+  icon: ind.icon,
+  name: ind.name,
+  description: ind.description,
+  href: ind.href,
+  color: ind.color,
+  hex: ind.hex,
+  gradient: ind.gradient,
+  size: CARD_SIZE[ind.id] ?? "medium",
+  tags: ind.relevantSolutions
+    .map((id) => getSolution(id)?.title)
+    .filter((title): title is string => Boolean(title)),
+});
+
+const fromContent = (c: CardContent, i: number): RenderCard => ({
+  key: `${c.title}-${i}`,
+  icon: c.icon,
+  name: c.title,
+  description: c.description,
+  href: c.link,
+  color: c.color,
+  hex: c.hex,
+  gradient: c.gradient,
+  // First card spans wide; the rest are uniform medium tiles.
+  size: i === 0 ? "large" : "medium",
+  tags: [],
+});
+
+export function Industries({
+  content,
+}: {
+  content?: { heading: SectionHeadingContent | null; items: CardContent[] } | null;
+}) {
+  const cards = content?.items.length
+    ? content.items.map(fromContent)
+    : INDUSTRIES.map(fromIndustry);
+
   return (
     <section
       id="industries"
@@ -34,46 +86,38 @@ export function Industries() {
       <Container>
         <SectionHeading
           eyebrow="Industries"
-          title="Built for Your Industry"
-          description="Solutions designed with your industry's unique challenges in mind."
+          title={content?.heading?.title || "Built for Your Industry"}
+          description={
+            content?.heading?.description ||
+            "Solutions designed with your industry's unique challenges in mind."
+          }
         />
 
         <Stagger className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-flow-dense lg:grid-cols-3">
-          {INDUSTRIES.map((industry) => {
-            const size = CARD_SIZE[industry.id] ?? "medium";
-            return (
-              <StaggerItem
-                key={industry.id}
-                className={cn("h-full", size === "large" && "sm:col-span-2")}
-              >
-                <IndustryCard industry={industry} size={size} />
-              </StaggerItem>
-            );
-          })}
+          {cards.map((card) => (
+            <StaggerItem
+              key={card.key}
+              className={cn("h-full", card.size === "large" && "sm:col-span-2")}
+            >
+              <IndustryCard card={card} />
+            </StaggerItem>
+          ))}
         </Stagger>
       </Container>
     </section>
   );
 }
 
-function IndustryCard({
-  industry,
-  size,
-}: {
-  industry: Industry;
-  size: CardSize;
-}) {
-  const Icon = getIcon(industry.icon);
-  const large = size === "large";
-  const tags = industry.relevantSolutions
-    .map((id) => getSolution(id)?.title)
-    .filter((title): title is string => Boolean(title));
+function IndustryCard({ card }: { card: RenderCard }) {
+  const Icon = getIcon(card.icon);
+  const large = card.size === "large";
+  const tags = card.tags;
 
   return (
     <Link
-      href={industry.href}
+      href={card.href}
       onMouseMove={trackSpotlight}
-      style={{ "--accent-border": `${industry.hex}4d` } as CSSProperties}
+      style={{ "--accent-border": `${card.hex}4d` } as CSSProperties}
       className={cn(
         "group bg-card relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1e1e22] transition-all duration-200 ease-out hover:-translate-y-1 hover:border-(--accent-border)",
         large ? "p-8" : "p-7"
@@ -84,7 +128,7 @@ function IndustryCard({
         aria-hidden
         className={cn(
           "pointer-events-none absolute inset-0 bg-linear-to-br",
-          industry.gradient,
+          card.gradient,
           large ? "opacity-[0.07]" : "opacity-[0.04]"
         )}
       />
@@ -94,22 +138,22 @@ function IndustryCard({
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
         style={{
-          background: `radial-gradient(${large ? 380 : 280}px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${industry.hex}14, transparent 70%)`,
+          background: `radial-gradient(${large ? 380 : 280}px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${card.hex}14, transparent 70%)`,
         }}
       />
 
       {/* Abstract pattern on large cards */}
-      {large ? <CardPattern className={industry.color} /> : null}
+      {large ? <CardPattern className={card.color} /> : null}
 
       <span
         className={cn(
           "relative grid place-items-center rounded-xl",
-          industry.color,
+          card.color,
           large ? "h-14 w-14" : "h-12 w-12"
         )}
         style={{
-          backgroundColor: `${industry.hex}1a`,
-          boxShadow: `0 0 24px -6px ${industry.hex}66`,
+          backgroundColor: `${card.hex}1a`,
+          boxShadow: `0 0 24px -6px ${card.hex}66`,
         }}
       >
         <Icon className={large ? "h-6 w-6" : "h-5 w-5"} />
@@ -121,7 +165,7 @@ function IndustryCard({
           large ? "text-2xl" : "text-lg"
         )}
       >
-        {industry.name}
+        {card.name}
       </h3>
       <p
         className={cn(
@@ -129,7 +173,7 @@ function IndustryCard({
           !large && "line-clamp-3"
         )}
       >
-        {industry.description}
+        {card.description}
       </p>
 
       <span className="text-primary relative mt-4 inline-flex items-center gap-1.5 text-sm font-medium">

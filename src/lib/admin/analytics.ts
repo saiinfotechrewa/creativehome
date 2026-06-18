@@ -84,6 +84,9 @@ const dashboard = withAuthHandler(async (req: Request) => {
     leadsPrev,
     ordersCurrent,
     ordersPrev,
+    usersTotal,
+    usersCurrent,
+    usersPrev,
     paidCurrent,
     paidPrev,
   ] = await Promise.all([
@@ -93,6 +96,13 @@ const dashboard = withAuthHandler(async (req: Request) => {
     }),
     prisma.order.count({ where: { createdAt: { gte: range.start } } }),
     prisma.order.count({
+      where: { createdAt: { gte: range.prevStart, lt: range.start } },
+    }),
+    // Users headline = total active team members; change = new sign-ups this
+    // window vs the previous one.
+    prisma.adminUser.count({ where: { isActive: true } }),
+    prisma.adminUser.count({ where: { createdAt: { gte: range.start } } }),
+    prisma.adminUser.count({
       where: { createdAt: { gte: range.prevStart, lt: range.start } },
     }),
     prisma.order.findMany({
@@ -166,6 +176,11 @@ const dashboard = withAuthHandler(async (req: Request) => {
         change: percentChange(revenueCurrent, revenuePrev),
         currency: "INR",
       },
+      users: {
+        value: usersTotal,
+        previous: usersPrev,
+        change: percentChange(usersCurrent, usersPrev),
+      },
     },
     charts: {
       leads: seriesToArray(leadsSeries),
@@ -183,21 +198,50 @@ const leads = withAuthHandler(async (req: Request) => {
   const range = buildRange(days);
   const where = { createdAt: { gte: range.start } };
 
-  const [byStatus, bySource, byPriority, total, converted, inWindow] =
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [byStatus, bySource, byPriority, total, converted, newToday, inWindow] =
     await Promise.all([
       prisma.lead.groupBy({ by: ["status"], _count: true, where }),
       prisma.lead.groupBy({ by: ["source"], _count: true, where }),
       prisma.lead.groupBy({ by: ["priority"], _count: true, where }),
       prisma.lead.count({ where }),
       prisma.lead.count({ where: { ...where, status: "CONVERTED" } }),
-      prisma.lead.findMany({ where, select: { createdAt: true } }),
+      prisma.lead.count({ where: { createdAt: { gte: startOfToday } } }),
+      prisma.lead.findMany({
+        where,
+        select: { createdAt: true, communications: true },
+      }),
     ]);
 
   const series = emptySeries(range);
+  // Average first-response time = mean gap between a lead arriving and the first
+  // outbound communication logged against it (in hours). Leads with no reply yet
+  // are excluded from the average.
+  let responseTotalMs = 0;
+  let respondedCount = 0;
   for (const l of inWindow) {
     const k = dayKey(l.createdAt);
     if (series.has(k)) series.set(k, (series.get(k) ?? 0) + 1);
+
+    const comms = Array.isArray(l.communications) ? l.communications : [];
+    const firstReplyMs = comms
+      .map((c) => {
+        const at = (c as { at?: unknown }).at;
+        return typeof at === "string" ? new Date(at).getTime() : NaN;
+      })
+      .filter((t) => !Number.isNaN(t))
+      .sort((a, b) => a - b)[0];
+    if (firstReplyMs !== undefined) {
+      responseTotalMs += firstReplyMs - l.createdAt.getTime();
+      respondedCount += 1;
+    }
   }
+  const avgResponseHours =
+    respondedCount === 0
+      ? null
+      : Math.round((responseTotalMs / respondedCount / 3_600_000) * 10) / 10;
 
   const tally = (
     rows: Array<{ _count: number } & Record<string, unknown>>,
@@ -209,6 +253,8 @@ const leads = withAuthHandler(async (req: Request) => {
     range: { days, start: range.start, end: range.end },
     total,
     converted,
+    newToday,
+    avgResponseHours,
     conversionRate: total === 0 ? 0 : Math.round((converted / total) * 1000) / 10,
     byStatus: tally(byStatus, "status"),
     bySource: tally(bySource, "source"),

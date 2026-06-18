@@ -178,8 +178,8 @@ export const caseStudiesAdminApi = {
 
 // ──────────────────────────────── Public API ────────────────────────────────
 
-function publicGuard(req: Request): Response | null {
-  const limit = rateLimit(
+async function publicGuard(req: Request): Promise<Response | null> {
+  const limit = await rateLimit(
     `public:case-studies:${getClientIp(req)}`,
     PUBLIC_RATE.limit,
     PUBLIC_RATE.windowMs,
@@ -188,7 +188,7 @@ function publicGuard(req: Request): Response | null {
 }
 
 const listPublic = withAuthHandler(async (req: Request) => {
-  const blocked = publicGuard(req);
+  const blocked = await publicGuard(req);
   if (blocked) return blocked;
 
   const q = parseQuery(req, paginationSchema);
@@ -220,7 +220,7 @@ const listPublic = withAuthHandler(async (req: Request) => {
 });
 
 const getPublicBySlug = withAuthHandler(async (req: Request, ctx: SlugCtx) => {
-  const blocked = publicGuard(req);
+  const blocked = await publicGuard(req);
   if (blocked) return blocked;
 
   const { slug } = await ctx.params;

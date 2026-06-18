@@ -10,6 +10,7 @@ import {
 import { PERMISSIONS } from "@/lib/permissions";
 import { logActivity } from "@/lib/activity-logger";
 import { ok, fail, parseJson } from "@/lib/api-response";
+import { isRedisRateLimitEnabled } from "@/lib/rate-limit";
 import { maintenanceSchema, cacheClearSchema } from "@/lib/validators";
 import {
   getRazorpayCreds,
@@ -85,6 +86,9 @@ const health = withAuthHandler(async () => {
       memory: {
         rssMb: Math.round(mem.rss / 1024 / 1024),
         heapUsedMb: Math.round(mem.heapUsed / 1024 / 1024),
+      },
+      rateLimit: {
+        backend: isRedisRateLimitEnabled() ? "redis" : "memory",
       },
     },
   };

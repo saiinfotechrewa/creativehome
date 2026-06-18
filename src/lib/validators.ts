@@ -95,6 +95,17 @@ export const changePasswordSchema = z
 
 // ─────────────────────────── Settings ───────────────────────────────────────
 
+/**
+ * SEO defaults for the company settings carry the site-wide analytics IDs on
+ * top of the standard SEO fields. Kept separate from the shared `seoSchema` so
+ * products/services/etc. don't inherit the analytics keys.
+ */
+export const companySeoDefaultsSchema = seoSchema.extend({
+  googleAnalyticsId: z.string().max(40).optional().or(z.literal("")),
+  googleTagManagerId: z.string().max(40).optional().or(z.literal("")),
+  facebookPixelId: z.string().max(40).optional().or(z.literal("")),
+});
+
 export const companySettingsSchema = z.object({
   companyName: z.string().min(1).max(120),
   tagline: z.string().max(200).optional(),
@@ -107,7 +118,7 @@ export const companySettingsSchema = z.object({
   address: z.record(z.string(), z.unknown()).default({}),
   businessHours: z.record(z.string(), z.unknown()).default({}),
   socialLinks: z.record(z.string(), z.unknown()).default({}),
-  seoDefaults: seoSchema.default({}),
+  seoDefaults: companySeoDefaultsSchema.default({}),
 });
 
 export const homepageSectionSchema = z.object({
@@ -471,6 +482,8 @@ export const LEAD_SORT_FIELDS = [
 export const leadListQuerySchema = paginationSchema.extend({
   sort: z.enum(LEAD_SORT_FIELDS).default("createdAt"),
   status: leadStatusSchema.optional(),
+  /** Comma-separated statuses for multi-select filtering; OR'd together. */
+  statuses: z.string().optional(),
   source: leadSourceSchema.optional(),
   priority: prioritySchema.optional(),
   businessType: z.string().optional(),
@@ -485,9 +498,12 @@ export const leadPriorityUpdateSchema = z.object({
   priority: prioritySchema,
 });
 
-/** POST /[id]/communications — send (and log) an outbound message. */
+/**
+ * POST /[id]/communications — send (and log) an outbound message.
+ * `call` is a logging-only channel (records a call summary, no outbound send).
+ */
 export const leadCommunicationSchema = z.object({
-  channel: z.enum(["email", "whatsapp"]),
+  channel: z.enum(["email", "whatsapp", "call"]),
   subject: z.string().max(200).optional(),
   message: z.string().min(1, "Message is required").max(5000),
 });
@@ -511,6 +527,7 @@ export const leadConvertSchema = z.object({
 /** GET /export — same filters as the inbox, minus pagination. */
 export const leadExportQuerySchema = z.object({
   status: leadStatusSchema.optional(),
+  statuses: z.string().optional(),
   source: leadSourceSchema.optional(),
   priority: prioritySchema.optional(),
   businessType: z.string().optional(),
@@ -765,6 +782,38 @@ export const integrationTestSchema = z
     to: z.string().max(200).optional(),
   })
   .default({});
+
+// ─────────────────────── Notification settings ──────────────────────────────
+
+/** Events that can fan out to email / WhatsApp / SMS channels. */
+export const NOTIFICATION_EVENTS = [
+  "new_lead",
+  "new_order",
+  "payment_failed",
+  "consultation_booked",
+] as const;
+export const notificationEventSchema = z.enum(NOTIFICATION_EVENTS);
+
+const emailChannelSchema = z.object({
+  enabled: z.boolean().default(false),
+  recipients: z.array(z.string().max(200)).max(50).default([]),
+});
+const phoneChannelSchema = z.object({
+  enabled: z.boolean().default(false),
+  numbers: z.array(z.string().max(40)).max(50).default([]),
+});
+
+export const notificationChannelsSchema = z.object({
+  email: emailChannelSchema.default({ enabled: false, recipients: [] }),
+  whatsapp: phoneChannelSchema.default({ enabled: false, numbers: [] }),
+  sms: phoneChannelSchema.default({ enabled: false, numbers: [] }),
+});
+export type NotificationChannels = z.infer<typeof notificationChannelsSchema>;
+
+/** PUT body for a single notification event's channel config. */
+export const notificationUpdateSchema = z.object({
+  channels: notificationChannelsSchema,
+});
 
 // ───────────────────────────── Media ────────────────────────────────────────
 

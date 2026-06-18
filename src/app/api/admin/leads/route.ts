@@ -1,10 +1,20 @@
-import type { Prisma } from "@prisma/client";
+import type { LeadStatus, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { requirePermission, withAuthHandler } from "@/lib/auth-helpers";
 import { PERMISSIONS } from "@/lib/permissions";
 import { paginated, pageMeta, parseQuery } from "@/lib/api-response";
-import { leadListQuerySchema } from "@/lib/validators";
+import { leadListQuerySchema, leadStatusSchema } from "@/lib/validators";
+
+/** Parse a comma-separated `statuses` param into validated LeadStatus[]. */
+function parseStatuses(raw?: string): LeadStatus[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .filter((s): s is LeadStatus => leadStatusSchema.safeParse(s).success);
+}
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +28,9 @@ export const GET = withAuthHandler(async (req: Request) => {
   const q = parseQuery(req, leadListQuerySchema);
 
   const where: Prisma.LeadWhereInput = {};
-  if (q.status) where.status = q.status;
+  const statuses = parseStatuses(q.statuses);
+  if (statuses.length) where.status = { in: statuses };
+  else if (q.status) where.status = q.status;
   if (q.source) where.source = q.source;
   if (q.priority) where.priority = q.priority;
   if (q.businessType) {

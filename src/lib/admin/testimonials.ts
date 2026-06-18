@@ -261,7 +261,7 @@ export const testimonialsAdminApi = {
 // ──────────────────────────────── Public API ────────────────────────────────
 
 const listPublic = withAuthHandler(async (req: Request) => {
-  const limit = rateLimit(
+  const limit = await rateLimit(
     `public:testimonials:${getClientIp(req)}`,
     PUBLIC_RATE.limit,
     PUBLIC_RATE.windowMs,

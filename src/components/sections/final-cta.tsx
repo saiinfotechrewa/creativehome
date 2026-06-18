@@ -9,10 +9,11 @@ import { MagneticButton } from "@/components/ui/magnetic-button";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { EASE } from "@/lib/animations";
+import type { FinalCtaContentProps } from "@/lib/homepage-sections";
 import { cn } from "@/lib/utils";
 
-const HEADLINE_WORDS = "Ready to Digitize Your Business?".split(" ");
-const GRADIENT_WORD = "Digitize";
+const DEFAULT_HEADLINE = "Ready to Digitize Your Business?";
+const DEFAULT_GRADIENT_WORD = "Digitize";
 
 /** Deterministic star field — seeded so SSR and client render identically. */
 function seededRandom(seed: number) {
@@ -74,8 +75,35 @@ const item: Variants = {
   }),
 };
 
-export function FinalCTA() {
+export function FinalCTA({ content }: { content?: FinalCtaContentProps | null }) {
   const reducedMotion = useReducedMotion();
+
+  // Build the word list: plain headline words, then gradient highlight words.
+  const headlineText = content?.headline || DEFAULT_HEADLINE;
+  const highlightSet = new Set(
+    content
+      ? content.highlight
+        ? content.highlight.split(" ")
+        : []
+      : [DEFAULT_GRADIENT_WORD],
+  );
+  const headlineWords = content?.highlight
+    ? [...headlineText.split(" "), ...content.highlight.split(" ")]
+    : headlineText.split(" ");
+
+  const badge = content?.badge || "Get Started";
+  const subheadline =
+    content?.subheadline ||
+    "Join 500+ businesses that have already transformed their operations with CreativeDox.";
+  const ctaPrimary = content?.ctaPrimary ?? {
+    text: "Schedule Free Consultation",
+    link: `mailto:hello@creativedox.com?subject=${encodeURIComponent("Free consultation request")}`,
+  };
+  const ctaSecondary = content?.ctaSecondary ?? {
+    text: "Explore All Products",
+    link: "/#products",
+  };
+  const primaryExternal = ctaPrimary.link.startsWith("mailto:") || ctaPrimary.link.startsWith("http");
 
   return (
     <section
@@ -153,17 +181,17 @@ export function FinalCTA() {
           {/* Badge */}
           <motion.div variants={item} custom={0.05}>
             <Badge featured glow>
-              Get Started
+              {badge}
             </Badge>
           </motion.div>
 
           {/* Headline */}
           <h2
-            aria-label={HEADLINE_WORDS.join(" ")}
+            aria-label={headlineWords.join(" ")}
             className="text-foreground mt-7 text-4xl font-extrabold tracking-[-0.02em] text-balance sm:text-5xl lg:text-[56px] lg:leading-[1.1]"
           >
-            {HEADLINE_WORDS.map((word, i) => {
-              const gradient = word === GRADIENT_WORD;
+            {headlineWords.map((word, i) => {
+              const gradient = highlightSet.has(word);
               return (
                 <motion.span
                   key={word + i}
@@ -196,8 +224,7 @@ export function FinalCTA() {
             custom={0.75}
             className="text-muted-foreground mt-6 max-w-[560px] text-lg leading-relaxed"
           >
-            Join 500+ businesses that have already transformed their operations
-            with CreativeDox.
+            {subheadline}
           </motion.p>
 
           {/* CTAs */}
@@ -213,14 +240,14 @@ export function FinalCTA() {
               >
                 <MagneticButton>
                   <ButtonLink
-                    href={`mailto:hello@creativedox.com?subject=${encodeURIComponent("Free consultation request")}`}
-                    external
+                    href={ctaPrimary.link}
+                    external={primaryExternal}
                     size="lg"
                     variant="accent"
                     iconLeft={<Calendar className="h-4 w-4" />}
                     className="px-8"
                   >
-                    Schedule Free Consultation
+                    {ctaPrimary.text}
                     {/* Idle shimmer sweep every ~3s */}
                     {!reducedMotion && (
                       <motion.span
@@ -242,13 +269,13 @@ export function FinalCTA() {
             </motion.div>
             <motion.div variants={item} custom={1.0}>
               <ButtonLink
-                href="/#products"
+                href={ctaSecondary.link}
                 size="lg"
                 variant="outline"
                 iconRight={<ArrowRight className="h-4 w-4" />}
                 className="gradient-border-animated hover:shadow-secondary/20 border-transparent px-8 [--gradient-border-fill:transparent] hover:shadow-lg"
               >
-                Explore All Products
+                {ctaSecondary.text}
               </ButtonLink>
             </motion.div>
           </div>
@@ -263,7 +290,7 @@ export function FinalCTA() {
             className="group text-muted-foreground hover:text-foreground mt-8 inline-flex items-center gap-2 text-sm transition-colors"
           >
             <MessageCircle className="h-4 w-4 fill-[#25d366] text-[#25d366] group-hover:motion-safe:animate-pulse" />
-            Or chat with us directly on WhatsApp
+            {content?.whatsapp || "Or chat with us directly on WhatsApp"}
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
           </motion.a>
         </motion.div>

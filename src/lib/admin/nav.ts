@@ -107,7 +107,7 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       {
         label: "Homepage",
-        href: "/admin/homepage",
+        href: "/admin/content/homepage",
         icon: Home,
         permission: PERMISSIONS.HOMEPAGE_MANAGE,
       },

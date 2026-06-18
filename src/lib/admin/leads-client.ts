@@ -25,6 +25,20 @@ export interface LeadActivity {
   createdAt: string;
 }
 
+export type CommunicationChannel = "email" | "whatsapp" | "call";
+
+export interface Communication {
+  id: string;
+  channel: CommunicationChannel;
+  subject: string | null;
+  summary: string;
+  by: string | null;
+  byName: string | null;
+  at: string;
+  /** "sent" | "not_delivered" | "logged" */
+  status: string;
+}
+
 export interface LeadListItem {
   id: string;
   source: LeadSource;
@@ -49,9 +63,22 @@ export interface LeadDetail extends LeadListItem {
   consultation: Record<string, unknown>;
   utm: Record<string, unknown>;
   notes: LeadNote[];
-  communications: unknown[];
+  communications: Communication[];
   assignee: { id: string; name: string; email: string } | null;
   activities: LeadActivity[];
+}
+
+/** Headline metrics for the Leads Manager cards (from /analytics/leads). */
+export interface LeadAnalytics {
+  total: number;
+  converted: number;
+  newToday: number;
+  avgResponseHours: number | null;
+  conversionRate: number;
+  byStatus: { key: string; count: number }[];
+  bySource: { key: string; count: number }[];
+  byPriority: { key: string; count: number }[];
+  daily: { date: string; value: number }[];
 }
 
 export interface Assignee {
@@ -68,11 +95,29 @@ export interface Paginated<T> {
 
 export interface LeadFilters {
   search?: string;
-  status?: LeadStatus | "";
+  /** Multi-select statuses; OR'd together server-side. */
+  statuses?: LeadStatus[];
   source?: LeadSource | "";
   priority?: Priority | "";
+  businessType?: string;
   assignedTo?: string;
+  dateFrom?: string;
+  dateTo?: string;
   page?: number;
+}
+
+/** Build the shared query string from filters (used by list + export). */
+function filtersToParams(filters: LeadFilters): URLSearchParams {
+  const params = new URLSearchParams();
+  if (filters.search) params.set("search", filters.search);
+  if (filters.statuses?.length) params.set("statuses", filters.statuses.join(","));
+  if (filters.source) params.set("source", filters.source);
+  if (filters.priority) params.set("priority", filters.priority);
+  if (filters.businessType) params.set("businessType", filters.businessType);
+  if (filters.assignedTo) params.set("assignedTo", filters.assignedTo);
+  if (filters.dateFrom) params.set("dateFrom", filters.dateFrom);
+  if (filters.dateTo) params.set("dateTo", filters.dateTo);
+  return params;
 }
 
 // ─────────────────────────── Display config ─────────────────────────────────
@@ -125,6 +170,7 @@ export const leadKeys = {
   list: (filters: LeadFilters) => ["admin", "leads", "list", filters] as const,
   detail: (id: string) => ["admin", "leads", "detail", id] as const,
   assignees: ["admin", "leads", "assignees"] as const,
+  analytics: ["admin", "leads", "analytics"] as const,
 };
 
 // ─────────────────────────── Fetchers ───────────────────────────────────────
@@ -140,12 +186,7 @@ async function unwrap<T>(res: Response): Promise<T> {
 export async function fetchLeads(
   filters: LeadFilters,
 ): Promise<Paginated<LeadListItem>> {
-  const params = new URLSearchParams();
-  if (filters.search) params.set("search", filters.search);
-  if (filters.status) params.set("status", filters.status);
-  if (filters.source) params.set("source", filters.source);
-  if (filters.priority) params.set("priority", filters.priority);
-  if (filters.assignedTo) params.set("assignedTo", filters.assignedTo);
+  const params = filtersToParams(filters);
   params.set("page", String(filters.page ?? 1));
 
   const res = await fetch(`/api/admin/leads?${params.toString()}`);
@@ -154,6 +195,16 @@ export async function fetchLeads(
     throw new Error((json as { error?: string }).error ?? "Failed to load leads");
   }
   return json as Paginated<LeadListItem>;
+}
+
+/** Absolute URL for the CSV export, honouring the current filters. */
+export function leadsExportUrl(filters: LeadFilters): string {
+  return `/api/admin/leads/export?${filtersToParams(filters).toString()}`;
+}
+
+export async function fetchLeadAnalytics(days = 30): Promise<LeadAnalytics> {
+  const res = await fetch(`/api/admin/analytics/leads?days=${days}`);
+  return unwrap<LeadAnalytics>(res);
 }
 
 export async function fetchLead(id: string): Promise<LeadDetail> {
@@ -201,4 +252,118 @@ export async function addLeadNote(
     body: JSON.stringify({ text }),
   });
   return unwrap<{ note: LeadNote; notes: LeadNote[] }>(res);
+}
+
+export async function updateLeadPriority(
+  id: string,
+  priority: Priority,
+): Promise<LeadDetail> {
+  const res = await fetch(`/api/admin/leads/${id}/priority`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ priority }),
+  });
+  return unwrap<LeadDetail>(res);
+}
+
+export interface CommunicationResult {
+  entry: Communication;
+  communications: Communication[];
+  delivered: boolean;
+}
+
+export async function sendCommunication(
+  id: string,
+  input: { channel: CommunicationChannel; subject?: string; message: string },
+): Promise<CommunicationResult> {
+  const res = await fetch(`/api/admin/leads/${id}/communications`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  return unwrap<CommunicationResult>(res);
+}
+
+export interface ConvertInput {
+  email?: string;
+  phone?: string;
+  gstNumber?: string;
+}
+
+export async function convertLead(
+  id: string,
+  input: ConvertInput,
+): Promise<{ customer: { id: string; email: string } }> {
+  const res = await fetch(`/api/admin/leads/${id}/convert`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  return unwrap<{ customer: { id: string; email: string } }>(res);
+}
+
+export async function deleteLead(id: string): Promise<{ id: string }> {
+  const res = await fetch(`/api/admin/leads/${id}`, { method: "DELETE" });
+  return unwrap<{ id: string }>(res);
+}
+
+// ─────────────────────────── WhatsApp templates ─────────────────────────────
+
+/**
+ * Canned WhatsApp message templates. `{{var}}` placeholders are resolved from a
+ * variables map in the composer; `name` is pre-filled from the lead, the rest
+ * are editable before sending.
+ */
+export interface WhatsAppTemplate {
+  id: string;
+  label: string;
+  /** Placeholder keys (without braces) used in `body`, in display order. */
+  variables: string[];
+  body: string;
+}
+
+export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
+  {
+    id: "intro",
+    label: "Introduction",
+    variables: ["name", "agent"],
+    body:
+      "Hi {{name}}, this is {{agent}} from CreativeDox. Thanks for reaching out! " +
+      "I'd love to understand your requirements better. When would be a good time " +
+      "for a quick call?",
+  },
+  {
+    id: "follow_up",
+    label: "Follow-up",
+    variables: ["name", "product"],
+    body:
+      "Hi {{name}}, just following up on your interest in {{product}}. Do you have " +
+      "any questions I can help with? Happy to set up a quick demo.",
+  },
+  {
+    id: "demo_invite",
+    label: "Demo invite",
+    variables: ["name", "date", "time"],
+    body:
+      "Hi {{name}}, we've scheduled your demo for {{date}} at {{time}}. You'll " +
+      "receive a meeting link shortly. Looking forward to showing you around!",
+  },
+  {
+    id: "quote",
+    label: "Quote / pricing",
+    variables: ["name", "product", "price"],
+    body:
+      "Hi {{name}}, here are the pricing details for {{product}}: {{price}}. Let " +
+      "me know if you'd like to proceed or have any questions.",
+  },
+];
+
+/** Substitute `{{var}}` placeholders in a template body. */
+export function renderTemplate(
+  body: string,
+  vars: Record<string, string>,
+): string {
+  return body.replace(/\{\{(\w+)\}\}/g, (_, key: string) =>
+    vars[key]?.trim() ? vars[key] : `{{${key}}}`,
+  );
 }

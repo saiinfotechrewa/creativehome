@@ -10,6 +10,7 @@ import { MagneticButton } from "@/components/ui/magnetic-button";
 import { Particles } from "@/components/ui/particles";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { EASE } from "@/lib/animations";
+import type { HeroContentProps } from "@/lib/homepage-sections";
 import { cn } from "@/lib/utils";
 
 /** Lazy-load the network diagram — client-only, below the headline fold. */
@@ -18,9 +19,8 @@ const HeroNetwork = dynamic(
   { ssr: false, loading: () => <div style={{ width: 600, height: 600 }} /> }
 );
 
-const LINE_ONE = "Transform Your Business With".split(" ");
-const LINE_TWO = "Smart Software & Automation".split(" ");
-const HEADLINE = [...LINE_ONE, ...LINE_TWO].join(" ");
+const DEFAULT_LINE_ONE = "Transform Your Business With".split(" ");
+const DEFAULT_LINE_TWO = "Smart Software & Automation".split(" ");
 
 /** Word-by-word headline timing. */
 const WORD_DELAY = 0.25;
@@ -36,10 +36,32 @@ const enter = (delay: number) => ({
   transition: { duration: 0.6, ease: EASE, delay },
 });
 
-export function Hero() {
+export function Hero({ content }: { content?: HeroContentProps | null }) {
   const { scrollY } = useScroll();
   const indicatorOpacity = useTransform(scrollY, [0, 160], [1, 0]);
   const reducedMotion = useReducedMotion();
+
+  // Normal words then gradient (highlight) words; falls back to the static copy.
+  const lineOne = content?.headline ? content.headline.split(" ") : DEFAULT_LINE_ONE;
+  const lineTwo = content
+    ? content.highlight
+      ? content.highlight.split(" ")
+      : []
+    : DEFAULT_LINE_TWO;
+  const headlineLabel = [...lineOne, ...lineTwo].join(" ");
+
+  const badge = content?.badge || "Business Software & Automation Platform";
+  const subheadline =
+    content?.subheadline ||
+    "CRM, Accounting, Attendance, WhatsApp Automation, Marketing Tools — ready-to-use cloud software and custom development for growing businesses.";
+  const ctaPrimary = content?.ctaPrimary ?? {
+    text: "Explore Solutions",
+    link: "/#solutions",
+  };
+  const ctaSecondary = content?.ctaSecondary ?? {
+    text: "Book Free Consultation",
+    link: "/#contact",
+  };
 
   return (
     <section
@@ -58,17 +80,17 @@ export function Hero() {
           >
             <Badge featured glow>
               <Rocket className="text-primary h-3.5 w-3.5" />
-              Business Software &amp; Automation Platform
+              {badge}
             </Badge>
           </motion.div>
 
           {/* Headline */}
           <h1
-            aria-label={HEADLINE}
+            aria-label={headlineLabel}
             className="text-foreground mt-7 text-5xl font-extrabold tracking-[-0.03em] text-balance drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-6xl lg:text-7xl"
           >
             <span className="block">
-              {LINE_ONE.map((word, i) => (
+              {lineOne.map((word, i) => (
                 <HeadlineWord
                   key={word + i}
                   delay={WORD_DELAY + i * WORD_STAGGER}
@@ -77,17 +99,19 @@ export function Hero() {
                 </HeadlineWord>
               ))}
             </span>
-            <span className="mt-2 block">
-              {LINE_TWO.map((word, i) => (
-                <HeadlineWord
-                  key={word + i}
-                  gradient
-                  delay={WORD_DELAY + (LINE_ONE.length + i) * WORD_STAGGER}
-                >
-                  {word}
-                </HeadlineWord>
-              ))}
-            </span>
+            {lineTwo.length > 0 ? (
+              <span className="mt-2 block">
+                {lineTwo.map((word, i) => (
+                  <HeadlineWord
+                    key={word + i}
+                    gradient
+                    delay={WORD_DELAY + (lineOne.length + i) * WORD_STAGGER}
+                  >
+                    {word}
+                  </HeadlineWord>
+                ))}
+              </span>
+            ) : null}
           </h1>
 
           {/* Subheadline */}
@@ -95,9 +119,7 @@ export function Hero() {
             {...enter(SUB_DELAY)}
             className="text-muted-foreground mt-6 max-w-2xl text-lg leading-relaxed text-pretty sm:text-xl"
           >
-            CRM, Accounting, Attendance, WhatsApp Automation, Marketing Tools —
-            ready-to-use cloud software and custom development for growing
-            businesses.
+            {subheadline}
           </motion.p>
 
           {/* CTAs */}
@@ -105,24 +127,24 @@ export function Hero() {
             <motion.div {...enter(CTA_DELAY)}>
               <MagneticButton>
                 <ButtonLink
-                  href="/#solutions"
+                  href={ctaPrimary.link}
                   size="lg"
                   variant="accent"
                   iconRight={<ArrowRight className="h-4 w-4" />}
                 >
-                  Explore Solutions
+                  {ctaPrimary.text}
                 </ButtonLink>
               </MagneticButton>
             </motion.div>
             <motion.div {...enter(CTA_DELAY + 0.12)}>
               <ButtonLink
-                href="/#contact"
+                href={ctaSecondary.link}
                 size="lg"
                 variant="outline"
                 iconLeft={<Calendar className="h-4 w-4" />}
                 className="hover:border-primary/60 hover:shadow-primary/15 hover:shadow-lg"
               >
-                Book Free Consultation
+                {ctaSecondary.text}
               </ButtonLink>
             </motion.div>
           </div>
@@ -133,11 +155,17 @@ export function Hero() {
             className="text-muted-foreground mt-9 flex items-center gap-3 text-sm"
           >
             <TrustDots />
-            Trusted by{" "}
-            <span className="text-foreground -mx-1.5 font-semibold">
-              500+ businesses
-            </span>{" "}
-            across India
+            {content?.trustLine ? (
+              <span>{content.trustLine}</span>
+            ) : (
+              <>
+                Trusted by{" "}
+                <span className="text-foreground -mx-1.5 font-semibold">
+                  500+ businesses
+                </span>{" "}
+                across India
+              </>
+            )}
             <TrustDots reverse />
           </motion.p>
         </div>

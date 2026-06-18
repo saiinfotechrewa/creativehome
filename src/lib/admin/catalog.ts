@@ -269,7 +269,7 @@ export function createCatalogAdminApi(config: CatalogConfig) {
 export function createCatalogPublicApi(config: CatalogConfig) {
   /** GET — ACTIVE-only list, ordered, with search + pagination. */
   const list = withAuthHandler(async (req: Request) => {
-    const limit = rateLimit(
+    const limit = await rateLimit(
       `public:${config.module}:${getClientIp(req)}`,
       SINGLETON_RATE.limit,
       SINGLETON_RATE.windowMs,
@@ -303,7 +303,7 @@ export function createCatalogPublicApi(config: CatalogConfig) {
 
   /** GET /[slug] — a single ACTIVE record; anything else reads as 404. */
   const getBySlug = withAuthHandler(async (req: Request, ctx: SlugCtx) => {
-    const limit = rateLimit(
+    const limit = await rateLimit(
       `public:${config.module}:${getClientIp(req)}`,
       SINGLETON_RATE.limit,
       SINGLETON_RATE.windowMs,

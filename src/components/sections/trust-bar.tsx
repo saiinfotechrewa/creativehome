@@ -13,6 +13,8 @@ import {
 import { Container } from "@/components/ui/container";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { Stagger, StaggerItem } from "@/components/shared/motion";
+import { getIcon } from "@/lib/icons";
+import type { CounterContent } from "@/lib/homepage-sections";
 import { cn } from "@/lib/utils";
 
 interface TrustStat {
@@ -35,7 +37,16 @@ const TRUST_STATS: TrustStat[] = [
  * Counters start 200ms apart, land with a tiny scale bounce, and glow
  * once finished.
  */
-export function TrustBar() {
+export function TrustBar({ content }: { content?: CounterContent[] | null }) {
+  const stats: TrustStat[] = content?.length
+    ? content.map((c) => ({
+        icon: getIcon(c.icon),
+        value: c.value,
+        suffix: c.suffix,
+        label: c.label,
+      }))
+    : TRUST_STATS;
+
   return (
     <section
       id="trust"
@@ -53,13 +64,15 @@ export function TrustBar() {
 
       <Container>
         <Stagger className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-5 lg:gap-y-0">
-          {TRUST_STATS.map((stat, index) => (
+          {stats.map((stat, index) => (
             <StaggerItem
               key={stat.label}
               className={cn(
                 "lg:border-border/60 lg:border-l lg:first:border-l-0",
-                // 5th item: centered full-width row on the 2-col mobile grid
-                index === 4 && "col-span-2 lg:col-span-1"
+                // An odd last item: centered full-width row on the 2-col mobile grid
+                index === stats.length - 1 &&
+                  stats.length % 2 === 1 &&
+                  "col-span-2 lg:col-span-1"
               )}
             >
               <TrustStatItem stat={stat} index={index} />
