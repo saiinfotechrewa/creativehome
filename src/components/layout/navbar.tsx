@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { NAV_CTA, NAV_ITEMS } from "@/data/navigation";
-import { SITE_CONFIG } from "@/lib/constants";
+import type { CompanyProfile } from "@/lib/company-content";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { EASE } from "@/lib/animations";
 import { getIcon } from "@/lib/icons";
@@ -54,7 +54,7 @@ const mobileItem = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE } },
 } as const;
 
-export function Navbar() {
+export function Navbar({ company }: { company: CompanyProfile }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -140,13 +140,23 @@ export function Navbar() {
               className="flex items-center gap-2"
               onClick={closeAll}
             >
-              <span className="from-primary to-secondary grid h-8 w-8 place-items-center rounded-md bg-linear-to-br text-sm font-bold text-white">
-                {"{}"}
-              </span>
-              <span className="text-lg font-semibold tracking-tight">
-                <span className="text-foreground">Creative</span>
-                <span className="text-gradient">Dox</span>
-              </span>
+              {company.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  className="h-8 w-auto max-w-[180px] object-contain"
+                />
+              ) : (
+                <>
+                  <span className="from-primary to-secondary grid h-8 w-8 place-items-center rounded-md bg-linear-to-br text-sm font-bold text-white">
+                    {"{}"}
+                  </span>
+                  <span className="text-foreground text-lg font-semibold tracking-tight">
+                    {company.name}
+                  </span>
+                </>
+              )}
             </Link>
 
             {/* Desktop nav */}
@@ -366,7 +376,7 @@ export function Navbar() {
                   {NAV_CTA.secondary.label}
                 </ButtonLink>
                 <p className="text-muted-foreground mt-1 text-center text-xs">
-                  {SITE_CONFIG.tagline}
+                  {company.tagline}
                 </p>
               </div>
             </motion.div>

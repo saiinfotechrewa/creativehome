@@ -10,6 +10,7 @@ import { CursorGlow } from "@/components/shared/cursor-glow";
 import { PageTransition } from "@/components/shared/page-transition";
 import { SmoothScrollProvider } from "@/components/shared/smooth-scroll-provider";
 import { WhatsAppButton } from "@/components/shared/whatsapp-button";
+import type { CompanyProfile } from "@/lib/company-content";
 
 /**
  * Decides which chrome wraps the page.
@@ -22,7 +23,13 @@ import { WhatsAppButton } from "@/components/shared/whatsapp-button";
  * Public marketing routes keep the exact previous nesting, so their behaviour
  * is unchanged.
  */
-export function SiteFrame({ children }: { children: ReactNode }) {
+export function SiteFrame({
+  children,
+  company,
+}: {
+  children: ReactNode;
+  company: CompanyProfile;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin") ?? false;
 
@@ -34,13 +41,13 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   return (
     <SmoothScrollProvider>
       <CursorGlow />
-      <Navbar />
+      <Navbar company={company} />
       <main>
         <PageTransition>{children}</PageTransition>
       </main>
-      <Footer />
+      <Footer company={company} />
       <ScrollToTop />
-      <WhatsAppButton />
+      <WhatsAppButton phone={company.whatsapp} />
     </SmoothScrollProvider>
   );
 }
