@@ -14,8 +14,19 @@ import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { Stagger, StaggerItem } from "@/components/shared/motion";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { STATS } from "@/data/stats";
+import { getIcon } from "@/lib/icons";
 import type { Stat } from "@/lib/types";
+import type { CounterContent } from "@/lib/homepage-sections";
 import { cn } from "@/lib/utils";
+
+/** Fully-resolved counter the impact strip renders. */
+interface RenderStat {
+  key: string;
+  value: number;
+  suffix: string;
+  label: string;
+  meta: StatMeta;
+}
 
 interface StatMeta {
   icon: LucideIcon;
@@ -58,9 +69,33 @@ const FALLBACK_META: StatMeta = {
   gradient: "from-primary/25 to-secondary/25",
 };
 
+const fromStat = (stat: Stat): RenderStat => ({
+  key: stat.id,
+  value: stat.value,
+  suffix: stat.suffix,
+  label: stat.label,
+  meta: STAT_META[stat.id] ?? FALLBACK_META,
+});
+
+const fromContent = (c: CounterContent, i: number): RenderStat => ({
+  key: `${c.label}-${i}`,
+  value: c.value,
+  suffix: c.suffix,
+  label: c.label,
+  meta: {
+    icon: getIcon(c.icon),
+    color: c.color,
+    hex: c.hex,
+    gradient: `${c.gradient} opacity-90`,
+  },
+});
+
 /** Full-width impact strip of four massive scroll-triggered counters. */
-export function Stats() {
+export function Stats({ content }: { content?: CounterContent[] | null }) {
   const reducedMotion = useReducedMotion();
+  const stats: RenderStat[] = content?.length
+    ? content.map(fromContent)
+    : STATS.map(fromStat);
 
   return (
     <section
@@ -92,8 +127,8 @@ export function Stats() {
 
       <Container className="relative">
         <Stagger className="grid grid-cols-2 gap-5 lg:grid-cols-4">
-          {STATS.map((stat, index) => (
-            <StaggerItem key={stat.id} className="relative h-full">
+          {stats.map((stat, index) => (
+            <StaggerItem key={stat.key} className="relative h-full">
               {/* Gradient divider between counters (desktop) */}
               {index > 0 ? (
                 <span
@@ -110,10 +145,10 @@ export function Stats() {
   );
 }
 
-function ImpactStat({ stat, index }: { stat: Stat; index: number }) {
+function ImpactStat({ stat, index }: { stat: RenderStat; index: number }) {
   const [done, setDone] = useState(false);
   const reducedMotion = useReducedMotion();
-  const meta = STAT_META[stat.id] ?? FALLBACK_META;
+  const meta = stat.meta;
   const Icon = meta.icon;
 
   return (

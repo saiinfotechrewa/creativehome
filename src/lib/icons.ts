@@ -145,7 +145,11 @@ export const ICONS = {
 /** Every icon name available to the data layer. */
 export type IconName = keyof typeof ICONS;
 
-/** Resolve an icon name from the data layer to its Lucide component. */
-export function getIcon(name: IconName): LucideIcon {
-  return ICONS[name];
+/**
+ * Resolve an icon name to its Lucide component. Accepts arbitrary strings
+ * (e.g. CMS-authored content) and falls back to a neutral icon when the name
+ * isn't in the registry, so unknown icons never crash a render.
+ */
+export function getIcon(name: string): LucideIcon {
+  return ICONS[name as IconName] ?? ICONS["circle-help"];
 }

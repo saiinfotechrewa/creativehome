@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { JsonLd } from "@/components/shared/json-ld";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getHomepageContent } from "@/lib/homepage-content";
 import { Hero } from "@/components/sections/hero";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { LogoMarquee } from "@/components/sections/logo-marquee";
@@ -50,21 +51,23 @@ export const metadata: Metadata = {
  * hero → trust → solutions → industries → process → products →
  * why-us → testimonials → stats → contact.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const cms = await getHomepageContent();
+
   return (
     <>
       <JsonLd data={buildSiteJsonLd()} />
-      <Hero />
-      <TrustBar />
-      <LogoMarquee />
-      <Solutions />
-      <Industries />
-      <Process />
-      <ProductShowcase />
-      <WhyChooseUs />
-      <Testimonials />
-      <Stats />
-      <FinalCTA />
+      {cms.isActive("hero") && <Hero content={cms.hero} />}
+      {cms.isActive("trustBar") && <TrustBar content={cms.trustBar} />}
+      {cms.isActive("logoMarquee") && <LogoMarquee content={cms.logoMarquee} />}
+      {cms.isActive("solutions") && <Solutions content={cms.solutions} />}
+      {cms.isActive("industries") && <Industries content={cms.industries} />}
+      {cms.isActive("process") && <Process content={cms.process} />}
+      {cms.isActive("products") && <ProductShowcase />}
+      {cms.isActive("whyChooseUs") && <WhyChooseUs content={cms.whyChooseUs} />}
+      {cms.isActive("testimonials") && <Testimonials />}
+      {cms.isActive("stats") && <Stats content={cms.stats?.items ?? null} />}
+      {cms.isActive("finalCta") && <FinalCTA content={cms.finalCta} />}
       <PreFooterStrip />
     </>
   );

@@ -10,7 +10,36 @@ import { ADVANTAGES } from "@/data/advantages";
 import { getIcon } from "@/lib/icons";
 import { EASE } from "@/lib/animations";
 import type { Advantage } from "@/lib/types";
+import type { CardContent, SectionHeadingContent } from "@/lib/homepage-sections";
 import { cn, trackSpotlight } from "@/lib/utils";
+
+/** Render shape shared by static `Advantage`s and CMS `CardContent`. */
+interface RenderCard {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+  hex: string;
+}
+
+const fromAdvantage = (a: Advantage): RenderCard => ({
+  key: a.id,
+  icon: a.icon,
+  title: a.title,
+  description: a.description,
+  color: a.color,
+  hex: a.hex,
+});
+
+const fromContent = (c: CardContent, i: number): RenderCard => ({
+  key: `${c.title}-${i}`,
+  icon: c.icon,
+  title: c.title,
+  description: c.description,
+  color: c.color,
+  hex: c.hex,
+});
 
 const gridVariants: Variants = {
   hidden: {},
@@ -31,7 +60,15 @@ const iconVariants: Variants = {
   },
 };
 
-export function WhyChooseUs() {
+export function WhyChooseUs({
+  content,
+}: {
+  content?: { heading: SectionHeadingContent | null; items: CardContent[] } | null;
+}) {
+  const cards = content?.items.length
+    ? content.items.map(fromContent)
+    : ADVANTAGES.map(fromAdvantage);
+
   return (
     <section id="why-us" className="scroll-mt-20 py-28 sm:py-[120px]">
       <Container>
@@ -42,8 +79,11 @@ export function WhyChooseUs() {
               <SectionHeading
                 align="left"
                 eyebrow="Why CreativeDox"
-                title="Why 500+ Businesses Choose CreativeDox"
-                description="We combine enterprise-grade software with startup-friendly pricing and dedicated human support."
+                title={content?.heading?.title || "Why 500+ Businesses Choose CreativeDox"}
+                description={
+                  content?.heading?.description ||
+                  "We combine enterprise-grade software with startup-friendly pricing and dedicated human support."
+                }
               />
 
               <Reveal delay={0.3} className="mt-10">
@@ -65,13 +105,9 @@ export function WhyChooseUs() {
             viewport={{ once: true, margin: "-80px" }}
             className="grid gap-5 sm:grid-cols-2 lg:col-span-3"
           >
-            {ADVANTAGES.map((advantage) => (
-              <motion.div
-                key={advantage.id}
-                variants={cardVariants}
-                className="h-full"
-              >
-                <AdvantageCard advantage={advantage} />
+            {cards.map((card) => (
+              <motion.div key={card.key} variants={cardVariants} className="h-full">
+                <AdvantageCard advantage={card} />
               </motion.div>
             ))}
           </motion.div>
@@ -81,7 +117,7 @@ export function WhyChooseUs() {
   );
 }
 
-function AdvantageCard({ advantage }: { advantage: Advantage }) {
+function AdvantageCard({ advantage }: { advantage: RenderCard }) {
   const Icon = getIcon(advantage.icon);
 
   return (

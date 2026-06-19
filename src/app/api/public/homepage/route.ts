@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * exposed and internal timestamps are stripped.
  */
 export const GET = withAuthHandler(async (req: Request) => {
-  const limit = rateLimit(`public:homepage:${getClientIp(req)}`, 60, 60_000);
+  const limit = await rateLimit(`public:homepage:${getClientIp(req)}`, 60, 60_000);
   if (!limit.success) return fail("Too many requests", 429);
 
   const sections = await prisma.homepageSection.findMany({

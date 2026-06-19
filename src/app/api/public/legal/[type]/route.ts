@@ -14,7 +14,7 @@ type RouteContext = { params: Promise<{ type: string }> };
  */
 export const GET = withAuthHandler(
   async (req: Request, ctx: RouteContext) => {
-    const limit = rateLimit(`public:legal:${getClientIp(req)}`, 60, 60_000);
+    const limit = await rateLimit(`public:legal:${getClientIp(req)}`, 60, 60_000);
     if (!limit.success) return fail("Too many requests", 429);
 
     const { type } = await ctx.params;

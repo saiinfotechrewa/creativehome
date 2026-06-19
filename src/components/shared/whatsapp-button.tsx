@@ -5,13 +5,20 @@ import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants";
 
-/** Pre-filled enquiry message. The number lives in SOCIAL_LINKS.whatsapp. */
-const WHATSAPP_MESSAGE =
-  "Hi, I'm interested in CreativeDox solutions. Can you help?";
+/** Pre-filled enquiry message. */
+const WHATSAPP_MESSAGE = "Hi, I'm interested in your solutions. Can you help?";
 
-const WHATSAPP_HREF = `${SOCIAL_LINKS.whatsapp}?text=${encodeURIComponent(
-  WHATSAPP_MESSAGE
-)}`;
+/**
+ * Resolve a WhatsApp link from the admin-entered value, which may be a full
+ * `https://wa.me/…` URL or a plain phone number. Falls back to the constant.
+ */
+function whatsappHref(phone?: string): string {
+  const raw = phone?.trim() || SOCIAL_LINKS.whatsapp;
+  const base = raw.startsWith("http")
+    ? raw
+    : `https://wa.me/${raw.replace(/[^\d]/g, "")}`;
+  return `${base}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+}
 
 /** How close to the bottom (px) before the button hides near the footer. */
 const FOOTER_THRESHOLD = 320;
@@ -21,9 +28,10 @@ const FOOTER_THRESHOLD = 320;
  * Bounces in 2s after load, pulses a soft ring continuously, shows a
  * "Chat with us" tooltip on hover, and tucks away over the footer.
  */
-export function WhatsAppButton() {
+export function WhatsAppButton({ phone }: { phone?: string }) {
   const [ready, setReady] = useState(false);
   const [nearFooter, setNearFooter] = useState(false);
+  const href = whatsappHref(phone);
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 2000);
@@ -57,7 +65,7 @@ export function WhatsAppButton() {
       className="fixed right-5 bottom-5 z-40 sm:right-6 sm:bottom-6"
     >
       <a
-        href={WHATSAPP_HREF}
+        href={href}
         target="_blank"
         rel="noreferrer noopener"
         aria-label="Chat with us on WhatsApp"

@@ -31,7 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { email, password } = parsed.data;
 
         // 2. Rate limit per email (5 attempts / 5 min)
-        const limited = rateLimit(`login:${email.toLowerCase()}`, 5, 5 * 60_000);
+        const limited = await rateLimit(`login:${email.toLowerCase()}`, 5, 5 * 60_000);
         if (!limited.success) {
           throw new Error("Too many login attempts. Please try again later.");
         }
@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!valid) return null;
 
         // 5. Success — clear the rate-limit window, stamp last login
-        resetRateLimit(`login:${email.toLowerCase()}`);
+        await resetRateLimit(`login:${email.toLowerCase()}`);
         await prisma.adminUser.update({
           where: { id: user.id },
           data: { lastLogin: new Date() },

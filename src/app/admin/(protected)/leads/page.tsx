@@ -2,14 +2,14 @@ import { notFound } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { can, PERMISSIONS } from "@/lib/permissions";
-import { LeadsInbox } from "@/components/admin/leads/leads-inbox";
+import { LeadsManager } from "@/components/admin/leads/leads-manager";
 
 export const dynamic = "force-dynamic";
 
-/** Admin Leads inbox. Requires `leads:view`. */
+/** Admin Leads Manager. Requires `leads:view`; mutations require `leads:manage`. */
 export default async function LeadsPage() {
   const user = await getCurrentUser();
   if (!can(user?.permissions, PERMISSIONS.LEADS_VIEW)) notFound();
 
-  return <LeadsInbox />;
+  return <LeadsManager />;
 }

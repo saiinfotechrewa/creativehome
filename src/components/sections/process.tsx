@@ -16,19 +16,54 @@ import { PROCESS_STEPS } from "@/data/process";
 import { getIcon } from "@/lib/icons";
 import { EASE } from "@/lib/animations";
 import type { ProcessStep } from "@/lib/types";
+import type {
+  ProcessStepContent,
+  SectionHeadingContent,
+} from "@/lib/homepage-sections";
 import { cn } from "@/lib/utils";
 
-/** Fill fraction at which each step's node activates. */
-const STEP_FRACTIONS = PROCESS_STEPS.map(
-  (_, index) => (index + 0.5) / PROCESS_STEPS.length
-);
+/** Render shape shared by static `ProcessStep`s and CMS `ProcessStepContent`. */
+interface RenderStep {
+  id: string;
+  step: number;
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+}
+
+const fromStep = (s: ProcessStep): RenderStep => ({
+  id: s.id,
+  step: s.step,
+  icon: s.icon,
+  title: s.title,
+  description: s.description,
+  color: s.color,
+});
+
+const fromContent = (s: ProcessStepContent, i: number): RenderStep => ({
+  id: `${s.title}-${i}`,
+  step: s.number,
+  icon: s.icon,
+  title: s.title,
+  description: s.description,
+  color: s.color,
+});
 
 /**
  * Scroll-driven timeline: a gradient line fills with scroll progress,
  * lighting up each step node (and its card) as it passes. Horizontal
  * with alternating cards on desktop, vertical on mobile.
  */
-export function Process() {
+export function Process({
+  content,
+}: {
+  content?: { heading: SectionHeadingContent | null; steps: ProcessStepContent[] } | null;
+}) {
+  const steps: RenderStep[] = content?.steps.length
+    ? content.steps.map(fromContent)
+    : PROCESS_STEPS.map(fromStep);
+
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: timelineRef,
@@ -38,7 +73,8 @@ export function Process() {
 
   const [activeCount, setActiveCount] = useState(0);
   useMotionValueEvent(fill, "change", (value) => {
-    const count = STEP_FRACTIONS.filter((f) => value >= f).length;
+    // Fill fraction at which each step's node activates.
+    const count = steps.filter((_, i) => value >= (i + 0.5) / steps.length).length;
     setActiveCount((prev) => (prev === count ? prev : count));
   });
 
@@ -56,8 +92,11 @@ export function Process() {
       <Container className="relative">
         <SectionHeading
           eyebrow="How It Works"
-          title="From Chaos to Clarity in 4 Steps"
-          description="We don't just sell software. We partner with you to transform your operations."
+          title={content?.heading?.title || "From Chaos to Clarity in 4 Steps"}
+          description={
+            content?.heading?.description ||
+            "We don't just sell software. We partner with you to transform your operations."
+          }
         />
 
         <div ref={timelineRef}>
@@ -72,8 +111,11 @@ export function Process() {
               />
             </div>
 
-            <div className="relative grid grid-cols-4 gap-6">
-              {PROCESS_STEPS.map((step, index) => {
+            <div
+              className="relative grid gap-6"
+              style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+            >
+              {steps.map((step, index) => {
                 const active = index < activeCount;
                 const above = index % 2 === 0;
                 return (
@@ -113,7 +155,7 @@ export function Process() {
             </div>
 
             <div className="flex flex-col gap-10">
-              {PROCESS_STEPS.map((step, index) => {
+              {steps.map((step, index) => {
                 const active = index < activeCount;
                 return (
                   <div key={step.id} className="relative pl-16">
@@ -161,7 +203,7 @@ function StepNode({
   active,
   compact,
 }: {
-  step: ProcessStep;
+  step: RenderStep;
   index: number;
   active: boolean;
   compact?: boolean;
@@ -193,7 +235,7 @@ function StepCard({
   index,
   active,
 }: {
-  step: ProcessStep;
+  step: RenderStep;
   index: number;
   active: boolean;
 }) {
